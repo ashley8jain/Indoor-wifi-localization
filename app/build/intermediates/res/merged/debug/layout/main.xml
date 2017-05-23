@@ -8,17 +8,23 @@
         android:id="@+id/textStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="clip_vertical"
-        android:layout_weight="10"
+        android:gravity="top"
+        android:textAppearance="?android:attr/textAppearanceLarge" >
+    </TextView>
+    <TextView
+        android:id="@+id/acc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge" >
     </TextView>
+
 
     <Button
         android:id="@+id/update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="0"
         android:text="Locate" >
     </Button>

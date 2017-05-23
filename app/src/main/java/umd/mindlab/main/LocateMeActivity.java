@@ -6,6 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,14 +24,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LocateMeActivity extends Activity {
+public class LocateMeActivity extends Activity implements SensorEventListener{
 	private static final String TAG = "LocateMeActivity";
 	public WifiManager wifi;
 	BroadcastReceiver receiver;
 	public String xml;
 	public String address;
-
+	private SensorManager mSensorManager;
+	private Sensor mSensor;
 	TextView textStatus;
+	TextView accStatus;
 	Button update;
 	//Button verify;
 
@@ -47,6 +53,9 @@ public class LocateMeActivity extends Activity {
 			registerReceiver(receiver, new IntentFilter(
 					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 			}
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mSensorManager.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	/** Called when the activity is first created. */
@@ -59,6 +68,7 @@ public class LocateMeActivity extends Activity {
 			registerReceiver(receiver, new IntentFilter(
 					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 			}
+		accStatus = (TextView) findViewById(R.id.acc);
 		update = (Button) findViewById(R.id.update);
 		update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -167,4 +177,13 @@ public class LocateMeActivity extends Activity {
 		return networkInfo == null ? false : networkInfo.isConnected();
 	}
 
+	@Override
+	public void onSensorChanged(SensorEvent sensorEvent) {
+		accStatus.setText("X:"+sensorEvent.values[0]+" Y:"+sensorEvent.values[1]+" Z:"+sensorEvent.values[2]);
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int i) {
+
+	}
 }
