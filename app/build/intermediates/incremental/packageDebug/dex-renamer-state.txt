@@ -1,0 +1,7 @@
+#Mon May 22 12:36:42 EDT 2017
+base.0=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_b2c8ce8d9d161e6f54c34d2a990c2bde7431a298/classes.dex
+base.1=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_b2c8ce8d9d161e6f54c34d2a990c2bde7431a298
+file.0=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc/classes.dex

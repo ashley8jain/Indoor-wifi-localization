@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/instantRunSlicer/debug/jars/1/5/main_slice.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="192e7be069d25cae5c7fe76f031caf2a420c3bb3">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/5/main_slice_jar/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/instantRunSlicer/debug/jars/1/5/main_slice.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="192e7be069d25cae5c7fe76f031caf2a420c3bb3">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/5/main_slice_jar/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/libs/httpmime-4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9ded70b76b604f4b4b499cb15a6f7cd4ce490ba0">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/httpmime-4.0_a11d7fd7e3651b5bbcf66159e58cfbca16203e59/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c5fa8d3a3006b655c263450267d4f78f676e34a8">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Library/Android/sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-v4-18.0.0_e587c460abd5af58b66ed3848d3f3f4d2536b076/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/libs/apache-mime4j-0.6.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="945007627e8d12275d755081a9e609c018e1210d">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/apache-mime4j-0.6_ef78fe819ed9186d737c14c3df386ecbe6154ebb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_b2c8ce8d9d161e6f54c34d2a990c2bde7431a298/classes.dex" />
+    </item>
+
+</items>

@@ -1,0 +1,29 @@
+LocateMeActivity.java :-
+	To check if internet is connected, 
+	if connected, then it uses WifiReciever as Broadcast Receiver to display the current location
+
+WifiReciever.java :-
+
+	Package: umd.mindlab.objects
+
+		public class WifiReceiver extends BroadcastReceiver
+
+	Fields
+		public String TAG = "WifiReceiver";
+		public LocateMeActivity find; // scans wifi for the results 
+		public Location currentLocation;// stores the current location of the phone 
+
+	—————————————————————————————————————————————————-
+	Constructor
+	 	public WifiReceiver(LocateMeActivity LocateMeActivity) 
+			This calls the constructor of the BroadcastReceiver and initializes find to LocateMeActivity.
+	—————————————————————————————————————————————————-
+	Method 
+		public void onReceive(Context arg0, Intent arg1) 
+			Overriden method which creates a variable xml with initially <?xml version=\"1.0\"?>\n<data>\n. Then adds the 	currentlocation to the xml with lat, lon and alt tags. It stores the find scan results in a list results and prints the number of the results. A loop adds the list elements i.e. name, Mac, signal and freq,  in the xml. find’s xml is changed to the current xml.  
+
+
+
+SendWifiInfoTask.java :-
+	
+

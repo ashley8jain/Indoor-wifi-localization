@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi/icon.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-mdpi/icon.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi/button_pressed.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-mdpi/button_pressed.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi/button_on.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-mdpi/button_on.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi/button_default.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-mdpi/button_default.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi/ic_launcher.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-mdpi/ic_launcher.png"
+    }
+]

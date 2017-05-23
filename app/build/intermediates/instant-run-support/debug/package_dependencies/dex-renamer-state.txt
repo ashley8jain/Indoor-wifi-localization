@@ -1,0 +1,10 @@
+#Mon May 22 12:36:41 EDT 2017
+renamed.2=classes.dex
+renamed.1=classes2.dex
+renamed.0=classes3.dex
+base.2=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-v4-18.0.0_e587c460abd5af58b66ed3848d3f3f4d2536b076
+base.1=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/apache-mime4j-0.6_ef78fe819ed9186d737c14c3df386ecbe6154ebb
+base.0=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/httpmime-4.0_a11d7fd7e3651b5bbcf66159e58cfbca16203e59
+file.2=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-v4-18.0.0_e587c460abd5af58b66ed3848d3f3f4d2536b076/classes.dex
+file.1=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/apache-mime4j-0.6_ef78fe819ed9186d737c14c3df386ecbe6154ebb/classes.dex
+file.0=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/httpmime-4.0_a11d7fd7e3651b5bbcf66159e58cfbca16203e59/classes.dex

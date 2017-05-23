@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-hdpi/icon.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-hdpi/icon.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-hdpi/button_pressed.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-hdpi/button_pressed.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-hdpi/locateme.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-hdpi/locateme.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-hdpi/ic_launcher.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-hdpi/button_default.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-hdpi/button_default.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-hdpi/button_on.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-hdpi/button_on.png"
+    }
+]

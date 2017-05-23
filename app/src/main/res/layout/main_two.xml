@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:text="use the check boxes to indicate the location information that was inaccurate; use the text boxes to provide the correct information and HIT ENTER" />
+
+
+    <CheckBox
+        android:id="@+id/checkBuilding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Building" />
+
+    <EditText
+        android:id="@+id/buildingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.05" />
+
+    <CheckBox
+        android:id="@+id/checkWing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wing(floor and hall)" />
+
+    <EditText
+        android:id="@+id/wingText"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/checkRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Room" />
+
+    <EditText
+        android:id="@+id/roomText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+    
+    <CheckBox
+        android:id="@+id/checkx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ground Truth X coordinate" />
+
+    <EditText
+        android:id="@+id/xcoordText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+    
+    <CheckBox
+        android:id="@+id/checky"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ground Truth Y coordinate" />
+
+    <EditText
+        android:id="@+id/ycoordText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+    
+    <CheckBox
+        android:id="@+id/checkAP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ground Truth Nearest AP" />
+
+    <EditText
+        android:id="@+id/apText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_weight="0"
+        android:text="Submit" >
+    </Button>
+
+</LinearLayout>

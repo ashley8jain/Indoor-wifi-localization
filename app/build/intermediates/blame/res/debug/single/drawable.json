@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/button_inactive.xml",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/button_inactive.xml"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/button_active.xml",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/button_active.xml"
+    }
+]
