@@ -30,10 +30,11 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 	BroadcastReceiver receiver;
 	public String xml;
 	public String address;
-	private SensorManager mSensorManager;
-	private Sensor mSensor;
+	private SensorManager SM;
+	private Sensor accSensor;
+	private Sensor gyroSensor;
 	TextView textStatus;
-	TextView accStatus;
+	TextView accStatusX,accStatusY,accStatusZ;
 	Button update;
 	//Button verify;
 
@@ -53,9 +54,10 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 			registerReceiver(receiver, new IntentFilter(
 					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 			}
-		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		mSensorManager.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_NORMAL);
+		SM = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		accSensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		//gyroSensor = SM.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		SM.registerListener(this,accSensor,SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	/** Called when the activity is first created. */
@@ -68,7 +70,9 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 			registerReceiver(receiver, new IntentFilter(
 					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 			}
-		accStatus = (TextView) findViewById(R.id.acc);
+		accStatusX = (TextView) findViewById(R.id.accX);
+		accStatusY = (TextView) findViewById(R.id.accY);
+		accStatusZ = (TextView) findViewById(R.id.accZ);
 		update = (Button) findViewById(R.id.update);
 		update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -134,6 +138,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 		if (receiver != null) {
 			unregisterReceiver(receiver);
 		}
+		//SM.unregisterListener(accSensor);
+		//SM.unregisterListener(gyroSensor);
 		super.onDestroy();
 	}
 	
@@ -179,7 +185,9 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 
 	@Override
 	public void onSensorChanged(SensorEvent sensorEvent) {
-		accStatus.setText("X:"+sensorEvent.values[0]+" Y:"+sensorEvent.values[1]+" Z:"+sensorEvent.values[2]);
+		accStatusX.setText("X:"+String.format("%.1f",sensorEvent.values[0]));
+		accStatusY.setText("Y:"+String.format("%.1f",sensorEvent.values[1]));
+		accStatusZ.setText("Z:"+String.format("%.1f",sensorEvent.values[2]));
 	}
 
 	@Override
