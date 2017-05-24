@@ -2,8 +2,10 @@ package umd.mindlab.main;
 
 import umd.mindlab.objects.WifiReceiver;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
@@ -34,7 +36,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 	private Sensor accSensor;
 	private Sensor gyroSensor;
 	TextView textStatus;
-	TextView accStatusX,accStatusY,accStatusZ;
+	TextView accStatusX,accStatusY,accStatusZ,gpsloc;
 	Button update;
 	//Button verify;
 
@@ -55,9 +57,51 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 			}
 		SM = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		accSensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		accSensor = SM.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		//gyroSensor = SM.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		SM.registerListener(this,accSensor,SensorManager.SENSOR_DELAY_NORMAL);
+		gpsloc = (TextView) findViewById(R.id.gpslocation);
+		// Acquire a reference to the system Location Manager
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+		if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+			buildAlertMessageNoGps();
+		}
+
+		// Define a listener that responds to location updates
+		LocationListener locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+				// Called when a new location is found by the network location provider.
+//				Toast.makeText(
+//						LocateMeActivity.this,
+//						location.toString(),
+//						Toast.LENGTH_LONG).show();
+				gpsloc.setText("Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude());
+
+			}
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+			public void onProviderEnabled(String provider) {}
+
+			public void onProviderDisabled(String provider) {}
+		};
+
+// Register the listener with the Location Manager to receive location updates
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+	}
+
+	private void buildAlertMessageNoGps() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("GPS is disabled, please enable gps")
+				.setCancelable(false)
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+						startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+					}
+				});
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	/** Called when the activity is first created. */
