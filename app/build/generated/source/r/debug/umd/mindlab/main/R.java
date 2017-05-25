@@ -21,27 +21,30 @@ public final class R {
         public static final int locateme=0x7f020007;
     }
     public static final class id {
-        public static final int accX=0x7f050001;
-        public static final int accY=0x7f050002;
-        public static final int accZ=0x7f050003;
-        public static final int address=0x7f050007;
-        public static final int apText=0x7f050013;
-        public static final int buildingText=0x7f050009;
-        public static final int checkAP=0x7f050012;
-        public static final int checkBuilding=0x7f050008;
-        public static final int checkRoom=0x7f05000c;
-        public static final int checkWing=0x7f05000a;
-        public static final int checkx=0x7f05000e;
-        public static final int checky=0x7f050010;
-        public static final int gpslocation=0x7f050004;
-        public static final int label_address=0x7f050006;
-        public static final int roomText=0x7f05000d;
-        public static final int submit=0x7f050014;
+        public static final int accCoord=0x7f050001;
+        public static final int accelero=0x7f050004;
+        public static final int address=0x7f05000a;
+        public static final int apText=0x7f050016;
+        public static final int barStatus=0x7f050006;
+        public static final int buildingText=0x7f05000c;
+        public static final int checkAP=0x7f050015;
+        public static final int checkBuilding=0x7f05000b;
+        public static final int checkRoom=0x7f05000f;
+        public static final int checkWing=0x7f05000d;
+        public static final int checkx=0x7f050011;
+        public static final int checky=0x7f050013;
+        public static final int gpslocation=0x7f050007;
+        public static final int gravStatus=0x7f050003;
+        public static final int gyroCoord=0x7f050002;
+        public static final int label_address=0x7f050009;
+        public static final int magStatus=0x7f050005;
+        public static final int roomText=0x7f050010;
+        public static final int submit=0x7f050017;
         public static final int textStatus=0x7f050000;
-        public static final int update=0x7f050005;
-        public static final int wingText=0x7f05000b;
-        public static final int xcoordText=0x7f05000f;
-        public static final int ycoordText=0x7f050011;
+        public static final int update=0x7f050008;
+        public static final int wingText=0x7f05000e;
+        public static final int xcoordText=0x7f050012;
+        public static final int ycoordText=0x7f050014;
     }
     public static final class layout {
         public static final int main=0x7f030000;

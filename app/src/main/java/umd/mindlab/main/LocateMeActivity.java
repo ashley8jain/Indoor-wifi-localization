@@ -19,6 +19,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -26,216 +27,308 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Calendar;
+
 public class LocateMeActivity extends Activity implements SensorEventListener{
-	private static final String TAG = "LocateMeActivity";
-	public WifiManager wifi;
-	BroadcastReceiver receiver;
-	public String xml;
-	public String address;
-	private SensorManager SM;
-	private Sensor accSensor;
-	private Sensor gyroSensor;
-	TextView textStatus;
-	TextView accStatusX,accStatusY,accStatusZ,gpsloc;
-	Button update;
-	//Button verify;
+   private static final String TAG = "LocateMeActivity";
+   public WifiManager wifi;
+   BroadcastReceiver receiver;
+   public String xml;
+   public String address;
+   private SensorManager SM;
+   private Sensor laccSensor;
+   private Sensor gyroSensor;
+   private Sensor gravSensor,acceleroSensor,magneticSensor,baroSensor;
+   TextView textStatus;
+   TextView laccStatus,gpsloc,gyroStatus,gravStatus,acceleroStatus,magStatus,baroStatus;
+   Button update;
+   //Button verify;
 
-	LocationManager locman;
-	LocationListener loclist;
-	Location currentLocation;
+   LocationManager locman;
+   LocationListener loclist;
+   Location currentLocation;
 
-	public static int count = 0;
+   public static int count = 0;
 
-	public void onCreate(Bundle savedInstanceState) {
-		count = 0;
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		if (receiver == null) {
-			wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-			receiver = new WifiReceiver(this);
-			registerReceiver(receiver, new IntentFilter(
-					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-			}
-		SM = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		accSensor = SM.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		//gyroSensor = SM.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		SM.registerListener(this,accSensor,SensorManager.SENSOR_DELAY_NORMAL);
-		gpsloc = (TextView) findViewById(R.id.gpslocation);
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+   String path=Environment.getExternalStorageDirectory().getPath()+"/aa";
+   File file;
+   FileWriter outputStream = null;
 
-		if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-			buildAlertMessageNoGps();
-		}
 
-		// Define a listener that responds to location updates
-		LocationListener locationListener = new LocationListener() {
-			public void onLocationChanged(Location location) {
-				// Called when a new location is found by the network location provider.
-//				Toast.makeText(
-//						LocateMeActivity.this,
-//						location.toString(),
-//						Toast.LENGTH_LONG).show();
-				gpsloc.setText("Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude());
+   public void onCreate(Bundle savedInstanceState) {
+      count = 0;
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.main);
+      if (receiver == null) {
+         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+         receiver = new WifiReceiver(this);
+         registerReceiver(receiver, new IntentFilter(
+               WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+      }
+      SM = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+      laccSensor = SM.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+      gyroSensor = SM.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+      gravSensor = SM.getDefaultSensor(Sensor.TYPE_GRAVITY);
+      acceleroSensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+      magneticSensor = SM.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+      baroSensor = SM.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+      SM.registerListener(this,laccSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      SM.registerListener(this,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      SM.registerListener(this,gravSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      SM.registerListener(this,acceleroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      SM.registerListener(this,magneticSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      SM.registerListener(this,baroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      gpsloc = (TextView) findViewById(R.id.gpslocation);
+      // Acquire a reference to the system Location Manager
+      LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-			}
+      if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+         buildAlertMessageNoGps();
+      }
 
-			public void onStatusChanged(String provider, int status, Bundle extras) {}
+      // Define a listener that responds to location updates
+      loclist = new LocationListener() {
+         public void onLocationChanged(Location location) {
+            // Called when a new location is found by the network location provider.
+//          Toast.makeText(
+//                LocateMeActivity.this,
+//                location.toString(),
+//                Toast.LENGTH_LONG).show();
+            gpsloc.setText("Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude());
 
-			public void onProviderEnabled(String provider) {}
+         }
 
-			public void onProviderDisabled(String provider) {}
-		};
+         public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+         public void onProviderEnabled(String provider) {}
+
+         public void onProviderDisabled(String provider) {}
+      };
 
 // Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-	}
+      locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, loclist);
+   }
 
-	private void buildAlertMessageNoGps() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("GPS is disabled, please enable gps")
-				.setCancelable(false)
-				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-					public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-						startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-					}
-				});
-		final AlertDialog alert = builder.create();
-		alert.show();
-	}
+   private void buildAlertMessageNoGps() {
+      final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setMessage("GPS is disabled, please enable gps")
+            .setCancelable(false)
+            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                  startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+               }
+            });
+      final AlertDialog alert = builder.create();
+      alert.show();
+   }
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onStart() {
-		super.onStart();		
-		if (receiver == null) {
-			wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-			receiver = new WifiReceiver(this);
-			registerReceiver(receiver, new IntentFilter(
-					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-			}
-		accStatusX = (TextView) findViewById(R.id.accX);
-		accStatusY = (TextView) findViewById(R.id.accY);
-		accStatusZ = (TextView) findViewById(R.id.accZ);
-		update = (Button) findViewById(R.id.update);
-		update.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				if (count > 0) {
-					count++;
-					Toast.makeText(
-							LocateMeActivity.this,
-							"Currently, on " + count
-									+ " iteration, cannot start another scan",
-							Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(LocateMeActivity.this,
-							"Scan in progress...", Toast.LENGTH_LONG).show();
-					System.out.println("here....\n\n");
-					setUp();
-				}
-			}
-		});
+   /** Called when the activity is first created. */
+   @Override
+   public void onStart() {
+      super.onStart();
+      if (receiver == null) {
+         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+         receiver = new WifiReceiver(this);
+         registerReceiver(receiver, new IntentFilter(
+               WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+      }
 
-		/*verify = (Button) findViewById(R.id.changeActivity);
-		verify.setOnClickListener(new View.OnClickListener() {
+      laccStatus = (TextView) findViewById(R.id.accCoord);
+      gyroStatus = (TextView) findViewById(R.id.gyroCoord);
+      gravStatus = (TextView) findViewById(R.id.gravStatus);
+      magStatus = (TextView) findViewById(R.id.magStatus);
+      acceleroStatus = (TextView) findViewById(R.id.accelero);
+      baroStatus = (TextView) findViewById(R.id.barStatus);
+      update = (Button) findViewById(R.id.update);
+      update.setOnClickListener(new View.OnClickListener() {
+         public void onClick(View v) {
+            if (count > 0) {
+               count++;
+               Toast.makeText(
+                     LocateMeActivity.this,
+                     "Currently, on " + count
+                           + " iteration, cannot start another scan",
+                     Toast.LENGTH_LONG).show();
+            } else {
+               Toast.makeText(LocateMeActivity.this,
+                     "Scan in progress...", Toast.LENGTH_LONG).show();
+               System.out.println("here....\n\n");
+               setUp();
+            }
+         }
+      });
 
-			public void onClick(View v) {
-				if (count > 0) {
-					count++;
-					Toast.makeText(
-							LocateMeActivity.this,
-							"Currently, on "
-									+ count
-									+ " iteration, wait for scanning to complete...",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(LocateMeActivity.this, "Switching Activity",
-							Toast.LENGTH_SHORT).show();
-					Intent myIntent = new Intent(v.getContext(),
-							GiveFeedback.class);
-					Bundle xmlBundle = new Bundle();
-					xmlBundle.putString("xml", xml);
-					myIntent.putExtras(xmlBundle);
-					startActivityForResult(myIntent, 0);
-				}
-			}
-		});		*/
-	}
+      File temp = new File(path);
+      temp.mkdirs();
+      file=new File(path,"AccData.txt");
 
-	protected void onResume() {	
-		super.onResume();
-		if (receiver == null) {
-			wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-			receiver = new WifiReceiver(this);
-			registerReceiver(receiver, new IntentFilter(
-					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-			}				
-	}
+      try {
+         outputStream = new FileWriter(file);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
 
-	@Override
-	public void onStop() {
-		count = 0;
-		super.onStop();
-	}
-	
-	public void onDestroy() {
-		if (receiver != null) {
-			unregisterReceiver(receiver);
-		}
-		//SM.unregisterListener(accSensor);
-		//SM.unregisterListener(gyroSensor);
-		super.onDestroy();
-	}
-	
-	public void onPause() {
-		count = 0;
-		super.onPause();
-	}
+      /*verify = (Button) findViewById(R.id.changeActivity);
+      verify.setOnClickListener(new View.OnClickListener() {
 
-	protected void onSaveInstanceState(Bundle outState) {		
-		super.onSaveInstanceState(outState);							
-	}
-	
-	/*protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		System.out.println("In restore");
-		onCreate(savedInstanceState);			
-	}*/
+         public void onClick(View v) {
+            if (count > 0) {
+               count++;
+               Toast.makeText(
+                     LocateMeActivity.this,
+                     "Currently, on "
+                           + count
+                           + " iteration, wait for scanning to complete...",
+                     Toast.LENGTH_SHORT).show();
+            } else {
+               Toast.makeText(LocateMeActivity.this, "Switching Activity",
+                     Toast.LENGTH_SHORT).show();
+               Intent myIntent = new Intent(v.getContext(),
+                     GiveFeedback.class);
+               Bundle xmlBundle = new Bundle();
+               xmlBundle.putString("xml", xml);
+               myIntent.putExtras(xmlBundle);
+               startActivityForResult(myIntent, 0);
+            }
+         }
+      });       */
 
-	private void setUp() {
-		if (!isConnected(getApplicationContext())) {
-			Toast.makeText(
-					this,
-					"You are not connected to the internet, adjust your settings!",
-					Toast.LENGTH_LONG).show();
-			finish();
-		} else {
-			wifi.startScan();
-			//Log.v(TAG, currentLocation + "");
-			Toast.makeText(this, "Click locate to refresh results",
-					Toast.LENGTH_LONG).show();
-		}
-	}
 
-	private static boolean isConnected(Context context) {
-		ConnectivityManager connectivityManager = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = null;
-		if (connectivityManager != null) {
-			networkInfo = connectivityManager
-					.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		}
-		return networkInfo == null ? false : networkInfo.isConnected();
-	}
 
-	@Override
-	public void onSensorChanged(SensorEvent sensorEvent) {
-		accStatusX.setText("X:"+String.format("%.1f",sensorEvent.values[0]));
-		accStatusY.setText("Y:"+String.format("%.1f",sensorEvent.values[1]));
-		accStatusZ.setText("Z:"+String.format("%.1f",sensorEvent.values[2]));
-	}
 
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int i) {
+   }
 
-	}
+   protected void onResume() {
+      super.onResume();
+      if (receiver == null) {
+         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+         receiver = new WifiReceiver(this);
+         registerReceiver(receiver, new IntentFilter(
+               WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+      }
+   }
+
+   @Override
+   public void onStop() {
+      count = 0;
+      super.onStop();
+   }
+
+   public void onDestroy() {
+      if (receiver != null) {
+         unregisterReceiver(receiver);
+      }
+      //SM.unregisterListener((SensorEventListener) accSensor);
+      //SM.unregisterListener((SensorEventListener) gyroSensor);
+      super.onDestroy();
+      try {
+         outputStream.close();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+
+   public void onPause() {
+      count = 0;
+      super.onPause();
+   }
+
+   protected void onSaveInstanceState(Bundle outState) {
+      super.onSaveInstanceState(outState);
+   }
+
+   /*protected void onRestoreInstanceState(Bundle savedInstanceState) {
+      System.out.println("In restore");
+      onCreate(savedInstanceState);
+   }*/
+
+   private void setUp() {
+      if (!isConnected(getApplicationContext())) {
+         Toast.makeText(
+               this,
+               "You are not connected to the internet, adjust your settings!",
+               Toast.LENGTH_LONG).show();
+         finish();
+      } else {
+         wifi.startScan();
+         //Log.v(TAG, currentLocation + "");
+         Toast.makeText(this, "Click locate to refresh results",
+               Toast.LENGTH_LONG).show();
+      }
+   }
+
+   private static boolean isConnected(Context context) {
+      ConnectivityManager connectivityManager = (ConnectivityManager) context
+            .getSystemService(Context.CONNECTIVITY_SERVICE);
+      NetworkInfo networkInfo = null;
+      if (connectivityManager != null) {
+         networkInfo = connectivityManager
+               .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+      }
+      return networkInfo == null ? false : networkInfo.isConnected();
+   }
+
+   @Override
+   public void onSensorChanged(SensorEvent sensorEvent) {
+      String name = sensorEvent.sensor.getName();
+
+
+      if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+
+         Calendar rightNow = Calendar.getInstance();
+
+         String string ="\nYear:"+ rightNow.get(Calendar.YEAR) + " Month:"+rightNow.get(Calendar.MONTH) +
+               " Day:"+rightNow.get(Calendar.DAY_OF_MONTH)+" Time:"+rightNow.get(Calendar.HOUR_OF_DAY)+":"+rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND)+
+               "\nX:"+String.format("%.1f", sensorEvent.values[0])+
+               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+               "\nZ:" + String.format("%.1f", sensorEvent.values[2])+"\n";
+         acceleroStatus.setText("Accelerometer (m/s^2)"+string);
+
+         try {
+
+            outputStream.append(string);
+            outputStream.flush();
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      }
+      if(sensorEvent.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION) {
+         laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+      }
+      if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE){
+         gyroStatus.setText("Rotation rate (rad/s)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+      }
+      if(sensorEvent.sensor.getType()==Sensor.TYPE_GRAVITY){
+         gravStatus.setText("Gravity (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+      }
+      if(sensorEvent.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD) {
+         magStatus.setText("Magnetic Field (uT)\nX:" + String.format("%.1f", sensorEvent.values[0]) +
+               "\nY:" + String.format("%.1f", sensorEvent.values[1]) +
+               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+      }
+      if(sensorEvent.sensor.getType()==Sensor.TYPE_RELATIVE_HUMIDITY){
+         magStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
+      }
+
+   }
+
+   @Override
+   public void onAccuracyChanged(Sensor sensor, int i) {
+
+   }
 }
