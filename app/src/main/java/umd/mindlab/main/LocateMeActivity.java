@@ -21,6 +21,8 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +50,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
    private static final int BUFFER_SIZE = 2048*100;
    public WifiManager wifi;
    BroadcastReceiver receiver;
+   public TelephonyManager telephonyManager;
+   public String deviceID;
    public String xml;
    public String address;
    private SensorManager SM;
@@ -76,7 +80,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       setContentView(R.layout.main);
 
       SEL = this;
-
+      telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
       if (receiver == null) {
          wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
          receiver = new WifiReceiver(this);
@@ -157,6 +161,9 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       acceleroStatus = (TextView) findViewById(R.id.accelero);
       baroStatus = (TextView) findViewById(R.id.barStatus);
       update = (Button) findViewById(R.id.update);
+
+      deviceID = telephonyManager.getDeviceId();
+
       update.setOnClickListener(new View.OnClickListener() {
          public void onClick(View v) {
 
@@ -187,7 +194,9 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
                   FileOutputStream fileOutputStream;
                   ZipOutputStream zipOutputStream =  null;
                   Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
-                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/datas.zip";
+                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
+
+
                   File file = new File(destination);
                   if (!file.exists())
                      file.createNewFile();
@@ -368,7 +377,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
                ","+String.format("%.1f", sensorEvent.values[0])+
                "," + String.format("%.1f", sensorEvent.values[1])+
                "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-
+         //Log.v(TAG,string);
 //         Toast.makeText(this, dateFormat.format(rightNow.getTimeInMillis())+"",
 //                 Toast.LENGTH_LONG).show();
 

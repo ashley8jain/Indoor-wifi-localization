@@ -20,21 +20,23 @@ import umd.mindlab.main.R;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 
 	public String TAG = "SendWifiInfoTask";
 	public final String URI = "http://rovermind.cs.umd.edu:8080/LocationServer/FindLocation?type=ap";
-	File file = new File(Environment.getExternalStorageDirectory().getPath(),
-			"datas.zip");
+
 	public LocateMeActivity fma;
 	
 	public SendWifiInfoTask(LocateMeActivity find){
 		fma = find;
 	}
-	
+
+
 	//@SuppressWarnings("finally")
 	@Override
 	protected String doInBackground(String... params) {
@@ -46,6 +48,7 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 		Log.v(TAG, post.getMethod());
 		Log.v(TAG, post.getURI().toASCIIString());
 
+		Log.v(TAG,"device: "+fma.deviceID);
 //		MultipartEntity entity = new MultipartEntity();
 //		try {
 //			entity.addPart("data", new InputStreamBody(
@@ -83,17 +86,24 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 //			Log.v(TAG, displayString);
 //		}
 
-		//Log.v(TAG,file.exists()+" hereeeeee");
+		File file = new File(Environment.getExternalStorageDirectory().getPath(),
+				fma.deviceID+".zip");
+
+//		Log.v(TAG,file.exists()+" hereeeeee");
 		InputStreamEntity reqEntity = null;
 		try {
 			reqEntity = new InputStreamEntity(
                     new FileInputStream(file), -1);
 			reqEntity.setContentType("binary/octet-stream");
-			reqEntity.setChunked(true); // Send in multiple parts if needed
+			//reqEntity.setChunked(true); // Send in multiple parts if needed
 			post.setEntity(reqEntity);
+			Log.v(TAG, "sending info");
 			HttpResponse response = client.execute(post);
+			Log.v(TAG,"responseee: "+response.toString());
+			Log.v(TAG, "post aborted: " + post.isAborted());
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
+
 
 			StringBuilder builder = new StringBuilder();
 			String line = "\n";
