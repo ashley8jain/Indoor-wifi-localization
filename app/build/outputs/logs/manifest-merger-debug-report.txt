@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:2:1-31:12
+ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:2:1-33:12
 	package
 		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:3:2-28
 		INJECTED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml
@@ -84,3 +84,7 @@ uses-permission#android.permission.READ_EXTERNAL_STORAGE
 ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:26:2-77
 	android:name
 		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:26:19-74
+uses-permission#android.permission.WRITE_INTERNAL_STORAGE
+ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:27:2-78
+	android:name
+		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:27:19-75

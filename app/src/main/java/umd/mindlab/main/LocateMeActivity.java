@@ -27,6 +27,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,9 +40,12 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class LocateMeActivity extends Activity implements SensorEventListener{
    private static final String TAG = "LocateMeActivity";
+   private static final int BUFFER_SIZE = 2048*100;
    public WifiManager wifi;
    BroadcastReceiver receiver;
    public String xml;
@@ -49,6 +54,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
    private Sensor laccSensor;
    private Sensor gyroSensor;
    private Sensor gravSensor,acceleroSensor,magneticSensor,baroSensor;
+   private SensorEventListener SEL;
    TextView textStatus;
    TextView laccStatus,gpsloc,gyroStatus,gravStatus,acceleroStatus,magStatus,baroStatus;
    Button update;
@@ -68,6 +74,9 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       count = 0;
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
+
+      SEL = this;
+
       if (receiver == null) {
          wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
          receiver = new WifiReceiver(this);
@@ -150,6 +159,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       update = (Button) findViewById(R.id.update);
       update.setOnClickListener(new View.OnClickListener() {
          public void onClick(View v) {
+
             if (count > 0) {
                count++;
                Toast.makeText(
@@ -158,8 +168,41 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
                            + " iteration, cannot start another scan",
                      Toast.LENGTH_LONG).show();
             } else {
-               Toast.makeText(LocateMeActivity.this,
-                     "Scan in progress...", Toast.LENGTH_LONG).show();
+               try {
+                  Toast.makeText(LocateMeActivity.this,
+                          "Scan in progress...", Toast.LENGTH_LONG).show();
+                  SM.unregisterListener(SEL,acceleroSensor);
+                  SM.unregisterListener(SEL,gyroSensor);
+                  SM.unregisterListener(SEL,gravSensor);
+                  SM.unregisterListener(SEL,laccSensor);
+                  SM.unregisterListener(SEL,magneticSensor);
+                  SM.unregisterListener(SEL,baroSensor);
+                  accelero_W.close();
+                  lacc_W.close();
+                  magn_W.close();
+                  gyro_W.close();
+                  grav_W.close();
+                  baro_W.close();
+
+                  FileOutputStream fileOutputStream;
+                  ZipOutputStream zipOutputStream =  null;
+                  Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
+                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/datas.zip";
+                  File file = new File(destination);
+                  if (!file.exists())
+                     file.createNewFile();
+
+                  fileOutputStream = new FileOutputStream(file);
+                  zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
+
+                  zipFile(zipOutputStream, path+"/");
+
+               } catch (IOException e) {
+                  e.printStackTrace();
+               }
+
+
+
                System.out.println("here....\n\n");
                setUp();
             }
@@ -250,8 +293,12 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       if (receiver != null) {
          unregisterReceiver(receiver);
       }
-      //SM.unregisterListener((SensorEventListener) accSensor);
-      //SM.unregisterListener((SensorEventListener) gyroSensor);
+      SM.unregisterListener(this,acceleroSensor);
+      SM.unregisterListener(this,gyroSensor);
+      SM.unregisterListener(this,gravSensor);
+      SM.unregisterListener(this,laccSensor);
+      SM.unregisterListener(this,magneticSensor);
+      SM.unregisterListener(this,baroSensor);
       super.onDestroy();
       try {
          accelero_W.close();
@@ -418,6 +465,39 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 
    @Override
    public void onAccuracyChanged(Sensor sensor, int i) {
+
+   }
+
+   private static void zipFile(ZipOutputStream zipOutputStream, String sourcePath) throws  IOException{
+      Log.v(TAG,sourcePath);
+      java.io.File files = new java.io.File(sourcePath);
+      java.io.File[] fileList = files.listFiles();
+
+      String entryPath="";
+      BufferedInputStream input;
+      for (java.io.File file : fileList) {
+         if (file.isDirectory()) {
+            zipFile(zipOutputStream, file.getPath());
+         } else {
+            byte data[] = new byte[BUFFER_SIZE];
+            FileInputStream fileInputStream = new FileInputStream(file.getPath());
+            input = new BufferedInputStream(fileInputStream, BUFFER_SIZE);
+            Log.v(TAG,file.getAbsolutePath());
+            Log.v(TAG,file.getAbsolutePath().replace(sourcePath,""));
+            entryPath=file.getAbsolutePath().replace( sourcePath,"");
+
+            ZipEntry entry = new ZipEntry(entryPath);
+            zipOutputStream.putNextEntry(entry);
+
+            int count;
+            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
+               zipOutputStream.write(data, 0, count);
+            }
+            input.close();
+         }
+      }
+      zipOutputStream.close();
+
 
    }
 }
