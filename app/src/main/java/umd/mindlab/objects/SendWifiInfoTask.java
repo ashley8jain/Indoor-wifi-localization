@@ -130,7 +130,6 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 //			Log.v(TAG, "right before the return");
 //			Log.v(TAG, displayString);
 //		}
-		
 		return displayString;
 
 	}

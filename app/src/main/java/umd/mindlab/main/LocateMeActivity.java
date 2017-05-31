@@ -19,6 +19,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.http.AndroidHttpClient;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,8 +32,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -76,6 +82,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
    LocationManager locman;
    LocationListener loclist;
    Location currentLocation;
+
+   int tmp=0;
 
    public static int count = 0;
 
@@ -130,6 +138,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          public void run() {
             try {
                sendGPS();
+               Log.v(TAG,"timer");
             } catch (IOException e) {
                e.printStackTrace();
             }
@@ -142,6 +151,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          public void onLocationChanged(Location location) {
             // Called when a new location is found by the network location provider.
             Calendar rightNow = Calendar.getInstance();
+            tmp++;
+            Log.v(TAG,"tmp: "+tmp);
             String str="";
             strr="";
 
@@ -197,7 +208,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       };
 
    // Register the listener with the Location Manager to receive location updates
-      locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,120000,20, loclist);
+      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,120000,20,loclist);
    }
 
    private void buildAlertMessageNoGps() {
@@ -557,11 +568,12 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
    void sendGPS() throws IOException {
       if(gps_W!=null) {
          gps_W.close();
+         tmp=0;
          FileOutputStream fileOutputStream;
          ZipOutputStream zipOutputStream =  null;
-         Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
+         //Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
 
-         String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+"_gps"+".zip";
+         String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+"_gps.zip";
 
          File file2 = new File(destination);
          if (!file2.exists())
@@ -571,11 +583,63 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
 
          zipFile(zipOutputStream, path2+"/");
+
          //send file
+         String URI = "http://rovermind.cs.umd.edu:8080/LocationServer/FindLocation?type=ap";
+         AndroidHttpClient client = AndroidHttpClient.newInstance("user agent");
+         String displayString = "";
 
-         //delete file
+         HttpPost post = new HttpPost(URI);
 
-      }
+         Log.v(TAG, post.getMethod());
+         Log.v(TAG, post.getURI().toASCIIString());
+
+         Log.v(TAG,"send");
+         File file = new File(Environment.getExternalStorageDirectory().getPath(),deviceID+"_gps.zip");
+
+           Log.v(TAG,file.exists()+" hereeeeee");
+           InputStreamEntity reqEntity = null;
+           try {
+               reqEntity = new InputStreamEntity(
+                       new FileInputStream(file), -1);
+               reqEntity.setContentType("binary/octet-stream");
+               reqEntity.setChunked(true); // Send in multiple parts if needed
+               post.setEntity(reqEntity);
+               Log.v(TAG, "sending info");
+               HttpResponse response = client.execute(post);
+               Log.v(TAG,"responseee: "+response.toString());
+               Log.v(TAG, "post aborted: " + post.isAborted());
+               BufferedReader reader = new BufferedReader(new InputStreamReader(
+                       response.getEntity().getContent()));
+
+
+               StringBuilder builder = new StringBuilder();
+               String line = "\n";
+               line = line + "\n";
+               while ((line = reader.readLine()) != null) {
+                   builder.append(line);
+                   builder.append("\n");
+                   Log.v(TAG, line + "\n");
+               }
+
+               String serverResponse = builder.toString();
+               Log.v(TAG, "server response: " + serverResponse);
+               displayString = serverResponse;
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+           finally {
+               client.close();
+               Log.v(TAG, "right before the return");
+               Log.v(TAG, displayString);
+           }
+
+            //delete file
+            file.delete();
+            gps_W = new FileWriter(gps_file);
+         }
    }
 
    private static void zipFile(ZipOutputStream zipOutputStream, String sourcePath) throws  IOException{
