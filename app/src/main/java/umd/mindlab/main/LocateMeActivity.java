@@ -12,6 +12,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,10 +44,15 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class LocateMeActivity extends Activity implements SensorEventListener{
+
    private static final String TAG = "LocateMeActivity";
    private static final int BUFFER_SIZE = 2048*100;
    public WifiManager wifi;
@@ -59,9 +66,11 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
    private Sensor gyroSensor;
    private Sensor gravSensor,acceleroSensor,magneticSensor,baroSensor;
    private SensorEventListener SEL;
+   String strr;
    TextView textStatus;
    TextView laccStatus,gpsloc,gyroStatus,gravStatus,acceleroStatus,magStatus,baroStatus;
    Button update;
+   Context context;
    //Button verify;
 
    LocationManager locman;
@@ -70,15 +79,22 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 
    public static int count = 0;
 
+   private Timer myTimer;
+
    String path=Environment.getExternalStorageDirectory().getPath()+"/datas";
+   String path2=Environment.getExternalStorageDirectory().getPath()+"/gps_data";
    File accelero_file,lacc_file,gyro_file,grav_file,magn_file,baro_file;
+   File gps_file;
    FileWriter accelero_W,lacc_W,gyro_W,grav_W,magn_W,baro_W;
+   FileWriter gps_W;
+
+   DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
    public void onCreate(Bundle savedInstanceState) {
       count = 0;
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
-
+      context = this;
       SEL = this;
       telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
       if (receiver == null) {
@@ -108,15 +124,69 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          buildAlertMessageNoGps();
       }
 
+      myTimer = new Timer();
+      myTimer.schedule(new TimerTask() {
+         @Override
+         public void run() {
+            try {
+               sendGPS();
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+
+      }, 0, 600000);
+
       // Define a listener that responds to location updates
       loclist = new LocationListener() {
          public void onLocationChanged(Location location) {
             // Called when a new location is found by the network location provider.
-//          Toast.makeText(
-//                LocateMeActivity.this,
-//                location.toString(),
-//                Toast.LENGTH_LONG).show();
-            gpsloc.setText("Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude());
+            Calendar rightNow = Calendar.getInstance();
+            String str="";
+            strr="";
+
+            Geocoder geocoder;
+            List<Address> addresses;
+            geocoder = new Geocoder(context, Locale.getDefault());
+            strr+=dateFormat.format(rightNow.getTime());
+
+            str+="Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude();
+            strr+=","+location.getLatitude()+","+location.getLongitude();
+            str+="\n Altitude: "+location.getAltitude();
+            strr+=","+location.getAltitude()+",";
+            try{
+               addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+               String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+
+               if(address!=null){
+                  str+="\n Address: "+address;
+                  strr+=address+" ";
+               }
+
+               String city = addresses.get(0).getLocality();
+               str+="\n City: "+city;
+               String state = addresses.get(0).getAdminArea();
+               str+="\n State: "+state;
+               String country = addresses.get(0).getCountryName();
+               str+="\n Country: "+country;
+               String postalCode = addresses.get(0).getPostalCode();
+               str+="\n Postal code: "+postalCode;
+
+               strr+=city+" "+state+" "+country+" "+postalCode;
+
+
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+
+            gpsloc.setText(str);
+
+            try {
+               gps_W.append(strr);
+               gps_W.flush();
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
          }
 
          public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -126,8 +196,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          public void onProviderDisabled(String provider) {}
       };
 
-// Register the listener with the Location Manager to receive location updates
-      locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, loclist);
+   // Register the listener with the Location Manager to receive location updates
+      locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,120000,20, loclist);
    }
 
    private void buildAlertMessageNoGps() {
@@ -194,8 +264,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
                   FileOutputStream fileOutputStream;
                   ZipOutputStream zipOutputStream =  null;
                   Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
-                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
 
+                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
 
                   File file = new File(destination);
                   if (!file.exists())
@@ -227,6 +297,11 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       grav_file = new File(path,"grav_data.csv");
       baro_file = new File(path,"baro_data.csv");
 
+      File dir2 = new File(path2);
+      dir2.mkdirs();
+
+      gps_file = new File(path2,"gps.csv");
+
       try {
          accelero_W = new FileWriter(accelero_file);
          lacc_W = new FileWriter(lacc_file);
@@ -234,18 +309,21 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          magn_W = new FileWriter(magn_file);
          grav_W = new FileWriter(grav_file);
          baro_W = new FileWriter(baro_file);
+         gps_W = new FileWriter(gps_file);
 
          accelero_W.append("date_time,X,Y,Z\n");
          lacc_W.append("date_time,X,Y,Z\n");
          gyro_W.append("date_time,X,Y,Z\n");
          magn_W.append("date_time,X,Y,Z\n");
          grav_W.append("date_time,X,Y,Z\n");
+         gps_W.append("Time,Lat,Long,Altitude,Address");
 
          accelero_W.flush();
          lacc_W.flush();
          gyro_W.flush();
          magn_W.flush();
          grav_W.flush();
+         gps_W.flush();
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -361,120 +439,143 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       return networkInfo == null ? false : networkInfo.isConnected();
    }
 
-   DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
 
    @Override
    public void onSensorChanged(SensorEvent sensorEvent) {
 
-      Calendar rightNow = Calendar.getInstance();
-
-      if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-         acceleroStatus.setText("Accelerometer (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-                 "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-                 "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
-
-         String string = dateFormat.format(rightNow.getTime())+
-               ","+String.format("%.1f", sensorEvent.values[0])+
-               "," + String.format("%.1f", sensorEvent.values[1])+
-               "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-         //Log.v(TAG,string);
-//         Toast.makeText(this, dateFormat.format(rightNow.getTimeInMillis())+"",
-//                 Toast.LENGTH_LONG).show();
-
-         try {
-
-            accelero_W.append(string);
-            accelero_W.flush();
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      }
-      if(sensorEvent.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION) {
-         laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
-
-         String string = dateFormat.format(rightNow.getTime())+
-                 ","+String.format("%.1f", sensorEvent.values[0])+
-                 "," + String.format("%.1f", sensorEvent.values[1])+
-                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-
-         try {
-
-            lacc_W.append(string);
-            lacc_W.flush();
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      }
-      if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE){
-         gyroStatus.setText("Rotation rate (rad/s)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
-
-         String string = dateFormat.format(rightNow.getTime())+
-                 ","+String.format("%.1f", sensorEvent.values[0])+
-                 "," + String.format("%.1f", sensorEvent.values[1])+
-                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-
-         try {
-
-            gyro_W.append(string);
-            gyro_W.flush();
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      }
-      if(sensorEvent.sensor.getType()==Sensor.TYPE_GRAVITY){
-         gravStatus.setText("Gravity (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
-
-         String string = dateFormat.format(rightNow.getTime())+
-                 ","+String.format("%.1f", sensorEvent.values[0])+
-                 "," + String.format("%.1f", sensorEvent.values[1])+
-                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-
-         try {
-
-            grav_W.append(string);
-            grav_W.flush();
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      }
-      if(sensorEvent.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD) {
-         magStatus.setText("Magnetic Field (uT)\nX:" + String.format("%.1f", sensorEvent.values[0]) +
-               "\nY:" + String.format("%.1f", sensorEvent.values[1]) +
-               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
-
-         String string = dateFormat.format(rightNow.getTime())+
-                 ","+String.format("%.1f", sensorEvent.values[0])+
-                 "," + String.format("%.1f", sensorEvent.values[1])+
-                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-
-         try {
-
-            magn_W.append(string);
-            magn_W.flush();
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      }
-      if(sensorEvent.sensor.getType()==Sensor.TYPE_RELATIVE_HUMIDITY){
-         baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
-      }
+//      Calendar rightNow = Calendar.getInstance();
+//
+//      if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+//         acceleroStatus.setText("Accelerometer (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+//                 "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+//                 "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+//
+//         String string = dateFormat.format(rightNow.getTime())+
+//               ","+String.format("%.1f", sensorEvent.values[0])+
+//               "," + String.format("%.1f", sensorEvent.values[1])+
+//               "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+//         //Log.v(TAG,string);
+////         Toast.makeText(this, dateFormat.format(rightNow.getTimeInMillis())+"",
+////                 Toast.LENGTH_LONG).show();
+//
+//         try {
+//
+//            accelero_W.append(string);
+//            accelero_W.flush();
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//         }
+//      }
+//      if(sensorEvent.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION) {
+//         laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+//               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+//               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+//
+//         String string = dateFormat.format(rightNow.getTime())+
+//                 ","+String.format("%.1f", sensorEvent.values[0])+
+//                 "," + String.format("%.1f", sensorEvent.values[1])+
+//                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+//
+//         try {
+//
+//            lacc_W.append(string);
+//            lacc_W.flush();
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//         }
+//      }
+//      if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE){
+////         gyroStatus.setText("Rotation rate (rad/s)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+////               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+////               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+//
+//         String string = dateFormat.format(rightNow.getTime())+
+//                 ","+String.format("%.1f", sensorEvent.values[0])+
+//                 "," + String.format("%.1f", sensorEvent.values[1])+
+//                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+//
+//         try {
+//
+//            gyro_W.append(string);
+//            gyro_W.flush();
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//         }
+//      }
+//      if(sensorEvent.sensor.getType() == Sensor.TYPE_GRAVITY){
+////         gravStatus.setText("Gravity (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+////               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+////               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+//
+//         String string = dateFormat.format(rightNow.getTime())+
+//                 ","+String.format("%.1f", sensorEvent.values[0])+
+//                 "," + String.format("%.1f", sensorEvent.values[1])+
+//                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+//
+//         try {
+//
+//            grav_W.append(string);
+//            grav_W.flush();
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//         }
+//      }
+//      if(sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+////
+//
+//
+//         String string = dateFormat.format(rightNow.getTime())+
+//                 ","+String.format("%.1f", sensorEvent.values[0])+
+//                 "," + String.format("%.1f", sensorEvent.values[1])+
+//                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+//
+//         try {
+//
+//            magn_W.append(string);
+//            magn_W.flush();
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//         }
+//      }
+//      if(sensorEvent.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY){
+//         baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
+//      }
 
    }
 
    @Override
    public void onAccuracyChanged(Sensor sensor, int i) {
 
+   }
+
+   void sendGPS() throws IOException {
+      if(gps_W!=null) {
+         gps_W.close();
+         FileOutputStream fileOutputStream;
+         ZipOutputStream zipOutputStream =  null;
+         Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
+
+         String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+"_gps"+".zip";
+
+         File file2 = new File(destination);
+         if (!file2.exists())
+            file2.createNewFile();
+
+         fileOutputStream = new FileOutputStream(file2);
+         zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
+
+         zipFile(zipOutputStream, path2+"/");
+         //send file
+
+         //delete file
+
+      }
    }
 
    private static void zipFile(ZipOutputStream zipOutputStream, String sourcePath) throws  IOException{
@@ -509,4 +610,8 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
 
 
    }
+
+
+
+
 }
