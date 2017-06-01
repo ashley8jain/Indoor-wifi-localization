@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <calloutStyle
+        borderWidth="-1"
+        cornerRadius="0"
+        maxHeight="garbage"
+        maxWidth="2000"
+        unrecognizedParameterName="ignored"
+        leaderPosition="garbage"
+        leaderLength="1000"
+        leaderWidth="30"
+        />
+</resources>

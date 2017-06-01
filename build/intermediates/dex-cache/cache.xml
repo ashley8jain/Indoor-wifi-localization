@@ -3,6 +3,24 @@
 
     <item
         is-multidex="true"
+        jar="/Users/ashleyjain/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/constraint-layout-solver-1.0.2_566fe47384c378afb82ac569fe79ddfcbea3c51d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/.android/build-cache/e52535bdbe933d86a0bb7fc3c9004d54ce4164eb/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_4d075c5ef0b4c2e91e32edbc6bb4d10815ce2a28/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/instantRunSlicer/debug/jars/1/5/main_slice.jar"
         jumboMode="true"
         optimize="true"
@@ -12,6 +30,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/ashleyjain/.android/build-cache/8b08c6b91d02603d25e59a7c9df2129684c2421b/output/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-23.4.0_f118e0397793a2c9b434cbe3a894c6ccb9ef7a45/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/instantRunSlicer/debug/jars/1/5/main_slice.jar"
         jumboMode="true"
         optimize="true"
@@ -21,30 +48,39 @@
     </item>
     <item
         is-multidex="true"
-        jar="/Users/ashleyjain/Downloads/LocateMe/app/libs/httpmime-4.0.jar"
+        jar="/Users/ashleyjain/.android/build-cache/2cc5fd308eaddd18e543fc6c236260a6f8a7ccda/output/jars/classes.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="9ded70b76b604f4b4b499cb15a6f7cd4ce490ba0">
-        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/httpmime-4.0_a11d7fd7e3651b5bbcf66159e58cfbca16203e59/classes.dex" />
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_555fb4e799916531313271382aa077b505c593b9/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jar="/Users/ashleyjain/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3.1/ecb6e1f8e4b0e84c4b886c2f14a1500caf309757/gson-2.3.1.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="be6b6d1235522e4b7ff0708fd148426765285d71">
-        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc/classes.dex" />
+        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/gson-2.3.1_fc0886c4f83f52b81c1f259bd0f6361ac744489d/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/Users/ashleyjain/Library/Android/sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
+        jar="/Users/ashleyjain/.android/build-cache/8b08c6b91d02603d25e59a7c9df2129684c2421b/output/jars/classes.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
-        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-v4-18.0.0_e587c460abd5af58b66ed3848d3f3f4d2536b076/classes.dex" />
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_e46aa661e2a8e6e0a76c906d8f00611c2c97be86/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ad10fd089c07aaf5fe5af1df53614d700956a706">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_5ba1dc4fe57eac2293552eff0cc427ad7b28536d/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -63,6 +99,51 @@
         revision="25.0.0"
         sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
         <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_b2c8ce8d9d161e6f54c34d2a990c2bde7431a298/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.4.0_b7f9d6cc0e7af34fcc1041940e1515857abdd872/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/libs/httpmime-4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9ded70b76b604f4b4b499cb15a6f7cd4ce490ba0">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/2/httpmime-4.0_a11d7fd7e3651b5bbcf66159e58cfbca16203e59/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9c8939e15bd6fd9046816644c7b463229f8fb6c9">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_d24f5a0ef9f8745e8ef3508e33fed47cd7bc4bc7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ashleyjain/.android/build-cache/4178360610782bec3bfe9b5bea24a1600b8df806/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_793fc6a649e48febfff1f87724a19817efd38ff1/classes.dex" />
     </item>
 
 </items>

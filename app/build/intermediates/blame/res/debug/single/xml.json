@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/xml/unit_test_callout_style_partially_populated.xml",
+        "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/xml/unit_test_callout_style_partially_populated.xml"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/xml/unit_test_callout_style_fully_populated.xml",
+        "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/xml/unit_test_callout_style_fully_populated.xml"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/xml/unit_test_callout_style_element_missing.xml",
+        "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/xml/unit_test_callout_style_element_missing.xml"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/xml/unit_test_callout_style_empty.xml",
+        "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/xml/unit_test_callout_style_empty.xml"
+    }
+]

@@ -75,7 +75,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
    String strr;
    TextView textStatus;
    TextView laccStatus,gpsloc,gyroStatus,gravStatus,acceleroStatus,magStatus,baroStatus;
-   Button update;
+   Button update,mapp;
    Context context;
    //Button verify;
 
@@ -208,7 +208,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       };
 
    // Register the listener with the Location Manager to receive location updates
-      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,120000,20,loclist);
+      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,120000,0,loclist);
    }
 
    private void buildAlertMessageNoGps() {
@@ -242,8 +242,16 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       acceleroStatus = (TextView) findViewById(R.id.accelero);
       baroStatus = (TextView) findViewById(R.id.barStatus);
       update = (Button) findViewById(R.id.update);
-
+      mapp = (Button) findViewById(R.id.other);
       deviceID = telephonyManager.getDeviceId();
+
+      mapp.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(context,map.class);
+            startActivity(intent);
+         }
+      });
 
       update.setOnClickListener(new View.OnClickListener() {
          public void onClick(View v) {
@@ -327,7 +335,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
          gyro_W.append("date_time,X,Y,Z\n");
          magn_W.append("date_time,X,Y,Z\n");
          grav_W.append("date_time,X,Y,Z\n");
-         gps_W.append("Time,Lat,Long,Altitude,Address");
+         gps_W.append("Time,Lat,Long,Altitude,Address\n");
 
          accelero_W.flush();
          lacc_W.flush();
