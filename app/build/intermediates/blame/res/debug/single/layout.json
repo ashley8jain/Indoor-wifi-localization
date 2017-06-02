@@ -92,12 +92,12 @@
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/layout/select_dialog_singlechoice_material.xml"
     },
     {
-        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/main_three.xml",
-        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/layout/main_three.xml"
-    },
-    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml",
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/layout/abc_alert_dialog_material.xml"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/main_three.xml",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/layout/main_three.xml"
     },
     {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/support_simple_spinner_dropdown_item.xml",

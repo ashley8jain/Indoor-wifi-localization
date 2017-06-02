@@ -14,6 +14,7 @@ import com.esri.arcgisruntime.portal.Portal;
 import com.esri.arcgisruntime.portal.PortalInfo;
 import com.esri.arcgisruntime.portal.PortalItem;
 import com.esri.arcgisruntime.portal.PortalUser;
+import com.esri.arcgisruntime.portal.PortalUserContent;
 import com.esri.arcgisruntime.security.AuthenticationManager;
 import com.esri.arcgisruntime.security.DefaultAuthenticationChallengeHandler;
 import com.esri.arcgisruntime.security.UserCredential;
@@ -33,12 +34,12 @@ public class map extends Activity {
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 38.99029, -76.9361, 16);
 //        mMapView.setMap(map);
 
-//        // Set the DefaultAuthenticationChallegeHandler to allow authentication with the portal.
-//        DefaultAuthenticationChallengeHandler handler = new DefaultAuthenticationChallengeHandler(this);
-//        AuthenticationManager.setAuthenticationChallengeHandler(handler);
+        // Set the DefaultAuthenticationChallegeHandler to allow authentication with the portal.
+        DefaultAuthenticationChallengeHandler handler = new DefaultAuthenticationChallengeHandler(this);
+        AuthenticationManager.setAuthenticationChallengeHandler(handler);
 
         // create a new Portal object
-        final Portal portal = new Portal("http://uofmd.maps.arcgis.com",true);
+        final Portal portal = new Portal("http://uofmd.maps.arcgis.com/",true);
         // create a Map which is loaded from a webmap
         UserCredential creds = new UserCredential("maracai77", "locus4160");
         portal.setCredential(creds);
@@ -48,19 +49,22 @@ public class map extends Activity {
                 if (portal.getLoadStatus() == LoadStatus.LOADED) {
                     PortalUser user = portal.getUser();
                     Log.v("Map","user: "+user.getFullName());
-
+                    Log.v("Map","portal loaded done");
+                    Log.v("Map","portal status: "+portal.getLoadStatus());
                 }
             }
         });
         portal.loadAsync();
+
 
         // create a PortalItem based on a pre-defined portal id
         final PortalItem portalItem = new PortalItem(portal, "41490d54d2044c1eaf20ae7776ebc85c");
         portalItem.addDoneLoadingListener(new Runnable() {
             @Override
             public void run() {
-                Log.v("Map","portalitem loaded done");
                 Log.v("Mapp","here: "+portalItem.getOwner());
+                Log.v("Map","portalitem loaded done");
+                Log.v("Map","portalitem status: "+portalItem.getLoadStatus());
             }
         });
         portalItem.loadAsync();
@@ -72,27 +76,37 @@ public class map extends Activity {
             @Override
             public void run() {
                 Log.v("Map","layer: "+layer.getName());
+                Log.v("Map","layer loaded done");
+                Log.v("Map","layer status: "+layer.getLoadStatus());
             }
         });
-        layer.loadAsync();
+//        layer.loadAsync();
+
+
+
 
         // create a map from a PortalItem
-
-        ArcGISMap map = new ArcGISMap(portalItem);
+//        while(!portalItem.getLoadStatus().equals("LOADED"));
+        final ArcGISMap map = new ArcGISMap(portalItem);
+        Log.v("Map","map status1: "+map.getLoadStatus());
         //load the map
         map.loadAsync();
 
+        Log.v("Map","map status2: "+map.getLoadStatus());
+
         //listen to when it is loaded
         map.addDoneLoadingListener(new Runnable() {
-
             @Override
             public void run() {
-                System.out.println("map loaded");
+                System.out.println("map loaded done");
+                Log.v("Map","map status: "+map.getLoadStatus()+" -> "+map.getLoadError());
+//                map.retryLoadAsync();
             }
         });
+        Log.v("Map","map status3: "+map.getLoadStatus());
+
         // set the map to be displayed in a MapView
         mMapView.setMap(map);
-
     }
 
     @Override

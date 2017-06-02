@@ -120,12 +120,12 @@
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/drawable-mdpi-v4/abc_spinner_mtrl_am_alpha.9.png"
     },
     {
-        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/arcgisruntime_mapview_magnifier.png",
-        "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/drawable-mdpi-v4/arcgisruntime_mapview_magnifier.png"
-    },
-    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/arcgisruntime_location_display_default_symbol.png",
         "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/drawable-mdpi-v4/arcgisruntime_location_display_default_symbol.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/arcgisruntime_mapview_magnifier.png",
+        "source": "/Users/ashleyjain/.android/build-cache/241577216440bbf7202790fc92b61b504aed3de0/output/res/drawable-mdpi-v4/arcgisruntime_mapview_magnifier.png"
     },
     {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/abc_textfield_default_mtrl_alpha.9.png",

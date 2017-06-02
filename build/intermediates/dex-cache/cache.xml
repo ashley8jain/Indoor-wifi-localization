@@ -21,30 +21,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/instantRunSlicer/debug/jars/1/5/main_slice.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="192e7be069d25cae5c7fe76f031caf2a420c3bb3">
-        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/5/main_slice_jar/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/Users/ashleyjain/.android/build-cache/8b08c6b91d02603d25e59a7c9df2129684c2421b/output/jars/libs/internal_impl-23.4.0.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
         sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
         <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-23.4.0_f118e0397793a2c9b434cbe3a894c6ccb9ef7a45/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/instantRunSlicer/debug/jars/1/5/main_slice.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="192e7be069d25cae5c7fe76f031caf2a420c3bb3">
-        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/5/main_slice_jar/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -102,15 +84,6 @@
     </item>
     <item
         is-multidex="true"
-        jar="/Users/ashleyjain/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
-        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.4.0_b7f9d6cc0e7af34fcc1041940e1515857abdd872/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/Users/ashleyjain/Downloads/LocateMe/app/libs/httpmime-4.0.jar"
         jumboMode="true"
         optimize="true"
@@ -120,11 +93,20 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/ashleyjain/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.4.0_b7f9d6cc0e7af34fcc1041940e1515857abdd872/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="9c8939e15bd6fd9046816644c7b463229f8fb6c9">
+        sha1="17017f40c956a5fc50a0d4b850a89e9808d5a53e">
         <dex dex="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc/classes.dex" />
     </item>
     <item

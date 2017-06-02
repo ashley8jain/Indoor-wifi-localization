@@ -39,7 +39,7 @@ dependencies {
 
 //    compile 'org.apache.httpcomponents:httpclient:4.2.6'
 //    compile 'org.apache.httpcomponents:httpmime:4.2.6'
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:23.0.0'
     compile 'com.esri.arcgisruntime:arcgis-android:100.0.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:+'

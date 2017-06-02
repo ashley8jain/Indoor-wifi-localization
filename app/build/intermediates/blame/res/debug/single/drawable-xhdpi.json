@@ -8,11 +8,11 @@
         "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/button_pressed.png"
     },
     {
-        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/button_on.png",
-        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/button_on.png"
-    },
-    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/ic_launcher.png",
         "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/button_on.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/button_on.png"
     }
 ]
