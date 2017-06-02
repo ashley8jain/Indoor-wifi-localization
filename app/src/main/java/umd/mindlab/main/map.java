@@ -54,20 +54,21 @@ public class map extends Activity {
                 }
             }
         });
-        portal.loadAsync();
+//        portal.loadAsync();
 
 
         // create a PortalItem based on a pre-defined portal id
-        final PortalItem portalItem = new PortalItem(portal, "41490d54d2044c1eaf20ae7776ebc85c");
+        final PortalItem portalItem = new PortalItem(portal, "30010341c0d3439ab3337cf79d70dc6b");
         portalItem.addDoneLoadingListener(new Runnable() {
             @Override
             public void run() {
                 Log.v("Mapp","here: "+portalItem.getOwner());
                 Log.v("Map","portalitem loaded done");
                 Log.v("Map","portalitem status: "+portalItem.getLoadStatus());
+                Log.v("Map","portal item type: "+portalItem.getType());
             }
         });
-        portalItem.loadAsync();
+//        portalItem.loadAsync();
 
         final ArcGISMapImageLayer layer = new ArcGISMapImageLayer("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer");
         UserCredential creds2 = new UserCredential("agrawala", "aa1234");
@@ -80,18 +81,18 @@ public class map extends Activity {
                 Log.v("Map","layer status: "+layer.getLoadStatus());
             }
         });
-//        layer.loadAsync();
+        layer.loadAsync();
 
 
 
 
         // create a map from a PortalItem
 //        while(!portalItem.getLoadStatus().equals("LOADED"));
+        Log.v("map","here portal id: "+portalItem.getItemId());
         final ArcGISMap map = new ArcGISMap(portalItem);
         Log.v("Map","map status1: "+map.getLoadStatus());
         //load the map
-        map.loadAsync();
-
+//        map.loadAsync();
         Log.v("Map","map status2: "+map.getLoadStatus());
 
         //listen to when it is loaded
@@ -99,14 +100,15 @@ public class map extends Activity {
             @Override
             public void run() {
                 System.out.println("map loaded done");
-                Log.v("Map","map status: "+map.getLoadStatus()+" -> "+map.getLoadError());
+                Log.v("Map","map status: "+map.getLoadStatus());
 //                map.retryLoadAsync();
             }
         });
-        Log.v("Map","map status3: "+map.getLoadStatus());
+
 
         // set the map to be displayed in a MapView
         mMapView.setMap(map);
+        Log.v("Map","map status3: "+map.getLoadStatus());
     }
 
     @Override
