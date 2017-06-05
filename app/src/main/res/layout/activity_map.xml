@@ -17,13 +17,18 @@
             android:ems="10"
             android:hint="location"
             android:inputType="text"
-            android:layout_weight="0.8"/>
+            android:layout_weight="0.5"/>
         <Button
             android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="search"
-            android:layout_weight="0.2"/>
+            android:layout_weight="0.3"/>
+        <Button
+            android:id="@+id/gpsbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="gps"/>
     </LinearLayout>
 
     <com.esri.arcgisruntime.mapping.view.MapView

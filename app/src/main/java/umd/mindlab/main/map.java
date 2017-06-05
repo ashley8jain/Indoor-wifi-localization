@@ -27,6 +27,7 @@ import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
+import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.portal.Portal;
 import com.esri.arcgisruntime.portal.PortalInfo;
@@ -53,7 +54,7 @@ public class map extends Activity {
     Context context;
     private MapView mMapView;
     EditText location;
-    Button search;
+    Button search,gpsbutton;
     GraphicsOverlay graphicsOverlay;
 
     @Override
@@ -65,6 +66,7 @@ public class map extends Activity {
         mMapView = (MapView) findViewById(R.id.mapView);
         location = (EditText) findViewById(R.id.location);
         search = (Button) findViewById(R.id.search);
+        gpsbutton = (Button) findViewById(R.id.gpsbutton);
 
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 38.99029, -76.9361, 16);
 //        mMapView.setMap(map);
@@ -146,15 +148,12 @@ public class map extends Activity {
 
         Log.v("Map","map status3: "+map.getLoadStatus());
 
-
-
-
         // Create a LocatorTask using an online locator
         final LocatorTask locatorTask = new LocatorTask("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
 
         final GeocodeParameters mGeocodeParameters = new GeocodeParameters();
         mGeocodeParameters.getResultAttributeNames().add("*");
-        mGeocodeParameters.setMaxResults(1);
+        mGeocodeParameters.setMaxResults(6);
         final GeocodeResult[] mGeocodedLocation = {null};
 
         locatorTask.addDoneLoadingListener(new Runnable() {
@@ -224,7 +223,11 @@ public class map extends Activity {
                                 // display on the map
                                 mGeocodedLocation[0] = geocodeResults.get(0);
                                 displaySearchResult(mGeocodedLocation[0].getDisplayLocation(), mGeocodedLocation[0].getLabel());
-                                Log.v("Map","search: "+mGeocodedLocation[0].getDisplayLocation()+" , "+mGeocodedLocation[0].getLabel());
+
+                                for(int i=0;i<geocodeResults.size();i++){
+                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
+                                }
+
 //                                Point point = new Point(mGeocodedLocation[0].getDisplayLocation().getX(),mGeocodedLocation[0].getDisplayLocation().getY(), SpatialReference.create(2229));
 //                                Viewpoint viewpoint = new Viewpoint(point,7000);
 //                                mMapView.setViewpoint(viewpoint);
@@ -312,6 +315,34 @@ public class map extends Activity {
             }
         });
 
+
+        final LocationDisplay mLocationDisplay;
+        // get the MapView's LocationDisplay
+        mLocationDisplay = mMapView.getLocationDisplay();
+
+        // Listen to changes in the status of the location data source.
+        mLocationDisplay.addDataSourceStatusChangedListener(new LocationDisplay.DataSourceStatusChangedListener() {
+            @Override
+            public void onStatusChanged(LocationDisplay.DataSourceStatusChangedEvent dataSourceStatusChangedEvent) {
+
+                // If LocationDisplay started OK, then continue.
+                if (dataSourceStatusChangedEvent.isStarted())
+                    return;
+
+                // No error is reported, then continue.
+                if (dataSourceStatusChangedEvent.getError() == null)
+                    return;
+
+            }
+        });
+        gpsbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLocationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.RECENTER);
+                if (!mLocationDisplay.isStarted())
+                    mLocationDisplay.startAsync();
+            }
+        });
 
 
     }

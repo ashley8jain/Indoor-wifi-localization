@@ -17,22 +17,22 @@ public final class R {
         public static final int arcgisruntime_mapview_magnifier_mask = 0x7f020051;
     }
     public static final class id {
-        public static final int auth_hostname = 0x7f0c0060;
-        public static final int auth_message = 0x7f0c0062;
-        public static final int auth_password = 0x7f0c0064;
-        public static final int auth_remember = 0x7f0c008b;
-        public static final int auth_separator = 0x7f0c0061;
-        public static final int auth_title = 0x7f0c005f;
-        public static final int auth_username = 0x7f0c0063;
-        public static final int mapview_esribanner_container = 0x7f0c005d;
-        public static final int mapview_esribanner_layout = 0x7f0c005c;
-        public static final int mapview_esribanner_logotext = 0x7f0c005e;
+        public static final int auth_hostname = 0x7f0d0061;
+        public static final int auth_message = 0x7f0d0063;
+        public static final int auth_password = 0x7f0d0065;
+        public static final int auth_remember = 0x7f0d0091;
+        public static final int auth_separator = 0x7f0d0062;
+        public static final int auth_title = 0x7f0d0060;
+        public static final int auth_username = 0x7f0d0064;
+        public static final int mapview_esribanner_container = 0x7f0d005e;
+        public static final int mapview_esribanner_layout = 0x7f0d005d;
+        public static final int mapview_esribanner_logotext = 0x7f0d005f;
     }
     public static final class layout {
         public static final int arcgisruntime_mapview_esribanner_layout = 0x7f03001a;
         public static final int cert_dialog = 0x7f03001b;
         public static final int cred_dialog = 0x7f03001c;
-        public static final int selfsigned_dialog = 0x7f03002b;
+        public static final int selfsigned_dialog = 0x7f03002d;
     }
     public static final class string {
         public static final int app_name = 0x7f060015;

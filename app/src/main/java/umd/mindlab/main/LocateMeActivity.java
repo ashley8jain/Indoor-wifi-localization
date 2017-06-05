@@ -248,6 +248,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
       mapp.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
+//            Intent intent = new Intent(context,search_map.class);
             Intent intent = new Intent(context,map.class);
             startActivity(intent);
          }
