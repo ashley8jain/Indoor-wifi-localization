@@ -6,22 +6,22 @@
     density="560dpi"
     format="10"
     plugin-version="2.3.2"
-    timestamp="1496426187384"
+    timestamp="1496678789658"
     token="-7847478169243322654"
     verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
-        duration="347" />
+        duration="619" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="23" />
+        duration="46" />
     <task
         name="verifier"
-        duration="4" />
+        duration="3" />
 
     <artifact
         location="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
@@ -32,7 +32,7 @@
 
     <build
         build-mode="FULL"
-        timestamp="1496424803393"
+        timestamp="1496676118980"
         verifier="FULL_BUILD_REQUESTED" >
         <artifact
             location="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
@@ -73,7 +73,7 @@
     </build>
     <build
         build-mode="COLD"
-        timestamp="1496426136073"
+        timestamp="1496678747356"
         verifier="COLD_SWAP_REQUESTED" >
         <artifact
             location="/Users/ashleyjain/Downloads/LocateMe/app/build/outputs/apk/app-debug.apk"
@@ -81,7 +81,7 @@
     </build>
     <build
         build-mode="COLD"
-        timestamp="1496426187384"
+        timestamp="1496678789658"
         verifier="COLD_SWAP_REQUESTED" >
         <artifact
             location="/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
