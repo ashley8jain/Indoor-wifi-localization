@@ -56,6 +56,10 @@
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/drawable/abc_item_background_holo_light.xml"
     },
     {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/gps_icon.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/gps_icon.png"
+    },
+    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/abc_edit_text_material.xml",
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/drawable/abc_edit_text_material.xml"
     },
@@ -72,8 +76,16 @@
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/drawable/abc_item_background_holo_dark.xml"
     },
     {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/search_icon.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/search_icon.png"
+    },
+    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/abc_btn_colored_material.xml",
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/drawable/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/wifi_icon.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/wifi_icon.png"
     },
     {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/abc_ratingbar_full_material.xml",

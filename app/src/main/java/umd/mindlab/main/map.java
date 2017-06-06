@@ -8,36 +8,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
-import com.esri.arcgisruntime.data.FeatureTable;
-import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.Point;
-import com.esri.arcgisruntime.geometry.PointCollection;
-import com.esri.arcgisruntime.geometry.Polygon;
-import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.geometry.SpatialReferences;
-import com.esri.arcgisruntime.internal.jni.CoreRequest;
 import com.esri.arcgisruntime.layers.ArcGISMapImageLayer;
-import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
-import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.Viewpoint;
-import com.esri.arcgisruntime.mapping.view.Graphic;
-import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
+import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.portal.Portal;
-import com.esri.arcgisruntime.portal.PortalInfo;
 import com.esri.arcgisruntime.portal.PortalItem;
 import com.esri.arcgisruntime.portal.PortalUser;
-import com.esri.arcgisruntime.portal.PortalUserContent;
 import com.esri.arcgisruntime.security.AuthenticationManager;
 import com.esri.arcgisruntime.security.DefaultAuthenticationChallengeHandler;
 import com.esri.arcgisruntime.security.UserCredential;
-import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.esri.arcgisruntime.tasks.geocode.GeocodeParameters;
 import com.esri.arcgisruntime.tasks.geocode.GeocodeResult;
 import com.esri.arcgisruntime.tasks.geocode.LocatorAttribute;
@@ -54,8 +44,8 @@ public class map extends Activity {
     Context context;
     private MapView mMapView;
     EditText location;
-    Button search,gpsbutton;
-    GraphicsOverlay graphicsOverlay;
+    ImageButton search,gpsbutton,wifibutton;
+    Callout mCallout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +55,9 @@ public class map extends Activity {
         context = this;
         mMapView = (MapView) findViewById(R.id.mapView);
         location = (EditText) findViewById(R.id.location);
-        search = (Button) findViewById(R.id.search);
-        gpsbutton = (Button) findViewById(R.id.gpsbutton);
-
+        search = (ImageButton) findViewById(R.id.search);
+        gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
+        wifibutton = (ImageButton) findViewById(R.id.wifiB);
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 38.99029, -76.9361, 16);
 //        mMapView.setMap(map);
 
@@ -162,7 +152,15 @@ public class map extends Activity {
                 if (locatorTask.getLoadStatus() == LoadStatus.LOADED) {
                     // Locator is ready to use
                     Log.v("Map","locatorTask loaded");
-
+//                    // Get LocatorInfo from a loaded LocatorTask
+//                    LocatorInfo locatorInfo = locatorTask.getLocatorInfo();
+//
+//                    // Loop through all the attributes available
+//                    for (LocatorAttribute resultAttribute : locatorInfo.getResultAttributes()) {
+//                        Log.v("attribute",resultAttribute.getDisplayName());
+////            resultAttributeNames.add(resultAttribute.getDisplayName());
+//                    }
+//
                 } else {
                     Log.i("Map", "Trying to reload locator task");
                     locatorTask.retryLoadAsync();
@@ -171,38 +169,8 @@ public class map extends Activity {
         });
 
         locatorTask.loadAsync();
-//        final GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
-//        final ListenableFuture<List<GeocodeResult>> geocodeFuture = onlineLocator.geocodeAsync("380 New York Street, Redlands, CA");
-//        geocodeFuture.addDoneListener(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    // Get the results of the async operation
-//                    List<GeocodeResult> geocodeResults = geocodeFuture.get();
-//
-//                    if (geocodeResults.size() > 0) {
-//                        // Use the first result - for example display in an existing Graphics Overlay
-//                        GeocodeResult topResult = geocodeResults.get(0);
-//                        Log.v("Map","location: "+topResult.getDisplayLocation());
-//                        Graphic gecodedLocation = new Graphic(topResult.getDisplayLocation(), topResult.getAttributes(),
-//                                new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.SQUARE, Color.rgb(255, 0, 0), 20.0f));
-//                        // add graphic to overlay
-//                        graphicsOverlay.getGraphics().add(gecodedLocation);
-//                        // add graphics overlay to the MapView
-//                        mMapView.getGraphicsOverlays().add(graphicsOverlay);
-//                        // create the London location point
-//                        Point londonPoint = new Point(topResult.getDisplayLocation().getX(),topResult.getDisplayLocation().getY(), SpatialReference.create(2229));
-//                        // create the viewpoint with the London point and scale
-//                        Viewpoint viewpoint = new Viewpoint(londonPoint,7000);
-//                        // set the map views's viewpoint to London with a ten second duration
-//                        mMapView.setViewpoint(viewpoint);
-//                    }
-//                }
-//                catch (InterruptedException | ExecutionException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+
+
 
 
         search.setOnClickListener(new View.OnClickListener() {
@@ -233,7 +201,7 @@ public class map extends Activity {
 //                                mMapView.setViewpoint(viewpoint);
 
                             } else {
-                                Toast.makeText(getApplicationContext(), "not found", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
                             }
 
                         } catch (InterruptedException | ExecutionException e) {
@@ -341,9 +309,27 @@ public class map extends Activity {
                 mLocationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.RECENTER);
                 if (!mLocationDisplay.isStarted())
                     mLocationDisplay.startAsync();
+                Log.v("gps",mLocationDisplay.getMapLocation().getX()+","+mLocationDisplay.getMapLocation().getY());
             }
         });
 
+        wifibutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView calloutContent = new TextView(getApplicationContext());
+                calloutContent.setTextColor(Color.BLACK);
+                calloutContent.setSingleLine();
+                calloutContent.setText("4160, A.V. Williams Building");
+                Viewpoint vp = new Viewpoint(38.990361,-76.936349,700);
+                // Zoom map to geocode result location
+                mMapView.setViewpointAsync(vp, 1);
+                Point mapPoint = new Point(-76.936349,38.990361, SpatialReferences.getWgs84());
+                mCallout = mMapView.getCallout();
+                mCallout.setLocation(mapPoint);
+                mCallout.setContent(calloutContent);
+                mCallout.show();
+            }
+        });
 
     }
 

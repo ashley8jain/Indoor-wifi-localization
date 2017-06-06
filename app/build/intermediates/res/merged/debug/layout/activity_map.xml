@@ -17,18 +17,26 @@
             android:ems="10"
             android:hint="location"
             android:inputType="text"
-            android:layout_weight="0.5"/>
-        <Button
+            android:layout_weight="0.7"/>
+        <ImageButton
             android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="search"
-            android:layout_weight="0.3"/>
-        <Button
+            android:src="@drawable/search_icon"
+            android:layout_weight="0.1"/>
+        <ImageButton
             android:id="@+id/gpsbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="gps"/>
+            android:src="@drawable/gps_icon"
+            android:layout_weight="0.1"/>
+        <ImageButton
+            android:id="@+id/wifiB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/wifi_icon"
+            android:layout_weight="0.1"/>
+
     </LinearLayout>
 
     <com.esri.arcgisruntime.mapping.view.MapView
