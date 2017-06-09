@@ -67,7 +67,7 @@ import com.esri.arcgisruntime.tasks.geocode.GeocodeResult;
 import com.esri.arcgisruntime.tasks.geocode.LocatorTask;
 import com.esri.arcgisruntime.tasks.geocode.ReverseGeocodeParameters;
 
-public class search_map extends Activity {
+public class search_map extends AppCompatActivity {
 
     private static final String TAG = "OfflineActivity";
     private final String extern = Environment.getExternalStorageDirectory().getPath();

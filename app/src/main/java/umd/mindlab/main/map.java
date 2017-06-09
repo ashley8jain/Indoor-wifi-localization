@@ -1,10 +1,16 @@
 package umd.mindlab.main;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,12 +18,26 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
+import com.esri.arcgisruntime.data.ServiceFeatureTable;
 import com.esri.arcgisruntime.geometry.Point;
+import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.layers.ArcGISMapImageLayer;
+import com.esri.arcgisruntime.layers.ArcGISSublayer;
+import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
+import com.esri.arcgisruntime.layers.FeatureLayer;
+import com.esri.arcgisruntime.layers.SublayerList;
 import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.LayerList;
 import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
@@ -33,19 +53,25 @@ import com.esri.arcgisruntime.tasks.geocode.GeocodeResult;
 import com.esri.arcgisruntime.tasks.geocode.LocatorAttribute;
 import com.esri.arcgisruntime.tasks.geocode.LocatorInfo;
 import com.esri.arcgisruntime.tasks.geocode.LocatorTask;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class map extends Activity {
+public class map extends AppCompatActivity {
 
     Context context;
     private MapView mMapView;
     EditText location;
     ImageButton search,gpsbutton,wifibutton;
     Callout mCallout;
+    LocatorTask locatorTask;
+    GeocodeParameters mGeocodeParameters;
+    GeocodeResult[] mGeocodedLocation = {null};
+    MaterialSearchView searchView;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +80,7 @@ public class map extends Activity {
 
         context = this;
         mMapView = (MapView) findViewById(R.id.mapView);
-        location = (EditText) findViewById(R.id.location);
+//        location = (EditText) findViewById(R.id.location);
         search = (ImageButton) findViewById(R.id.search);
         gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
         wifibutton = (ImageButton) findViewById(R.id.wifiB);
@@ -103,11 +129,18 @@ public class map extends Activity {
             @Override
             public void run() {
                 Log.v("Map","layer: "+mapImageLayer.getName());
+
+                for(int i=0;i<mapImageLayer.getSublayers().size();i++){
+                    Log.v("Map sublayer",mapImageLayer.getSublayers().get(i).getId()+"");
+                    for(int j=0;j<mapImageLayer.getSublayers().get(i).getSublayers().size();j++){
+                        Log.v("Map sublayer sublayer",mapImageLayer.getSublayers().get(i).getSublayers().get(j).getId()+"");
+                    }
+                }
                 Log.v("Map","layer loaded done");
                 Log.v("Map","layer status: "+mapImageLayer.getLoadStatus());
             }
         });
-//        layer.loadAsync();
+//        mapImageLayer.loadAsync();
 
 
 
@@ -133,18 +166,24 @@ public class map extends Activity {
         // add map image layer as operational layer
         map.getOperationalLayers().add(mapImageLayer);
 
+
+//        ServiceFeatureTable serviceFeatureTable = new ServiceFeatureTable("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer/25");
+//        FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTable);
+//        map.getOperationalLayers().add(featureLayer);
+//        ServiceFeatureTable serviceFeatureTable2 = new ServiceFeatureTable("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer/6");
+//        FeatureLayer featureLayer2 = new FeatureLayer(serviceFeatureTable2);
+//        map.getOperationalLayers().add(featureLayer2);
+
         // set the map to be displayed in a MapView
         mMapView.setMap(map);
 
         Log.v("Map","map status3: "+map.getLoadStatus());
 
         // Create a LocatorTask using an online locator
-        final LocatorTask locatorTask = new LocatorTask("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
-
-        final GeocodeParameters mGeocodeParameters = new GeocodeParameters();
+        locatorTask = new LocatorTask("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
+        mGeocodeParameters = new GeocodeParameters();
         mGeocodeParameters.getResultAttributeNames().add("*");
         mGeocodeParameters.setMaxResults(6);
-        final GeocodeResult[] mGeocodedLocation = {null};
 
         locatorTask.addDoneLoadingListener(new Runnable() {
             @Override
@@ -170,48 +209,53 @@ public class map extends Activity {
 
         locatorTask.loadAsync();
 
-
-
-
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(location.getText().toString(),
-                        mGeocodeParameters);
-                geocodeFuture.addDoneListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // Get the results of the async operation
-                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
+            }
+        });
 
-                            if (geocodeResults.size() > 0) {
-                                // Use the first result - for example
-                                // display on the map
-                                mGeocodedLocation[0] = geocodeResults.get(0);
-                                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(), mGeocodedLocation[0].getLabel());
 
-                                for(int i=0;i<geocodeResults.size();i++){
-                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
-                                }
-
-//                                Point point = new Point(mGeocodedLocation[0].getDisplayLocation().getX(),mGeocodedLocation[0].getDisplayLocation().getY(), SpatialReference.create(2229));
-//                                Viewpoint viewpoint = new Viewpoint(point,7000);
-//                                mMapView.setViewpoint(viewpoint);
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (InterruptedException | ExecutionException e) {
-                            // Deal with exception...
-                            e.printStackTrace();
-                        }
-                        // Done processing and can remove this listener.
-                        geocodeFuture.removeDoneListener(this);
-                    }
-                });
+//        search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(location.getText().toString(),
+//                        mGeocodeParameters);
+//                geocodeFuture.addDoneListener(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            // Get the results of the async operation
+//                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
+//
+//                            if (geocodeResults.size() > 0) {
+//                                // Use the first result - for example
+//                                // display on the map
+//                                mGeocodedLocation[0] = geocodeResults.get(0);
+//                                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(), mGeocodedLocation[0].getLabel());
+//
+//                                for(int i=0;i<geocodeResults.size();i++){
+//                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
+//                                }
+//
+////                                Point point = new Point(mGeocodedLocation[0].getDisplayLocation().getX(),mGeocodedLocation[0].getDisplayLocation().getY(), SpatialReference.create(2229));
+////                                Viewpoint viewpoint = new Viewpoint(point,7000);
+////                                mMapView.setViewpoint(viewpoint);
+//
+//                            } else {
+//                                Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                        } catch (InterruptedException | ExecutionException e) {
+//                            // Deal with exception...
+//                            e.printStackTrace();
+//                        }
+//                        // Done processing and can remove this listener.
+//                        geocodeFuture.removeDoneListener(this);
+//                    }
+//                });
 
 
 //                Polygon polygon = mMapView.getVisibleArea();
@@ -280,8 +324,8 @@ public class map extends Activity {
 //                        "    }\n" +
 //                        "   }");
 //                mMapView.setViewpointGeometryAsync(gm);
-            }
-        });
+//            }
+//        });
 
 
         final LocationDisplay mLocationDisplay;
@@ -316,21 +360,256 @@ public class map extends Activity {
         wifibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView calloutContent = new TextView(getApplicationContext());
-                calloutContent.setTextColor(Color.BLACK);
-                calloutContent.setSingleLine();
-                calloutContent.setText("4160, A.V. Williams Building");
-                Viewpoint vp = new Viewpoint(38.990361,-76.936349,700);
-                // Zoom map to geocode result location
-                mMapView.setViewpointAsync(vp, 1);
-                Point mapPoint = new Point(-76.936349,38.990361, SpatialReferences.getWgs84());
-                mCallout = mMapView.getCallout();
-                mCallout.setLocation(mapPoint);
-                mCallout.setContent(calloutContent);
-                mCallout.show();
+
+                // Create the request queue
+                RequestQueue queue = Volley.newRequestQueue(context);
+
+// Create the request object
+                String url = "http://rovermind.cs.umd.edu:8080/LocationServer/FindLocation?type=ap";
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                        new Response.Listener<String>() {
+
+                            @Override
+                            public void onResponse(String response) {
+                                // TODO handle the response
+                                Log.v("Response",response);
+                                TextView calloutContent = new TextView(getApplicationContext());
+                                calloutContent.setTextColor(Color.BLACK);
+                                calloutContent.setSingleLine();
+                                calloutContent.setText(response);
+                                Viewpoint vp = new Viewpoint(38.990361,-76.936349,700);
+                                // Zoom map to geocode result location
+                                mMapView.setViewpointAsync(vp, 1);
+                                Point mapPoint = new Point(-76.936349,38.990361, SpatialReferences.getWgs84());
+                                mCallout = mMapView.getCallout();
+                                mCallout.setLocation(mapPoint);
+                                mCallout.setContent(calloutContent);
+                                mCallout.show();
+
+                                //deselect all other floor and displaying floor no. 4 only
+                                for(int i=0;i<mapImageLayer.getSublayers().size();i++){
+                                    for(int j=0;j<mapImageLayer.getSublayers().get(i).getSublayers().size();j++){
+                                        if(j!=5){
+                                            mapImageLayer.getSublayers().get(i).getSublayers().get(j).setVisible(false);
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        },
+                        new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // TODO handle the error
+                            }
+
+                        }
+                ) {
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/xml";
+                    }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+//                        String postData = FooBar.getPostData(); // TODO get your final output
+                        String postData = "<?xml version=\"1.0\"?>\n" +
+                                "<data>\n" +
+                                "<accesspoints>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd</name>\n" +
+                                "<mac>00:81:c4:1e:09:7f</mac>\n" +
+                                "<signal>-58</signal>\n" +
+                                "<freq>5765</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-util2</name>\n" +
+                                "<mac>00:f6:63:6f:e4:dc</mac>\n" +
+                                "<signal>-50</signal>\n" +
+                                "<freq>5805</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>eduroam</name>\n" +
+                                "<mac>00:f6:63:6f:e4:de</mac>\n" +
+                                "<signal>-50</signal>\n" +
+                                "<freq>5805</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-secure</name>\n" +
+                                "<mac>00:f6:63:6f:e4:dd</mac>\n" +
+                                "<signal>-50</signal>\n" +
+                                "<freq>5805</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-secure</name>\n" +
+                                "<mac>00:81:c4:1e:09:7d</mac>\n" +
+                                "<signal>-58</signal>\n" +
+                                "<freq>5765</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-util2</name>\n" +
+                                "<mac>00:81:c4:1e:09:7c</mac>\n" +
+                                "<signal>-58</signal>\n" +
+                                "<freq>5765</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>eduroam</name>\n" +
+                                "<mac>00:81:c4:1e:09:7e</mac>\n" +
+                                "<signal>-58</signal>\n" +
+                                "<freq>5765</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-secure</name>\n" +
+                                "<mac>00:f6:63:70:c9:dd</mac>\n" +
+                                "<signal>-77</signal>\n" +
+                                "<freq>5180</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>eduroam</name>\n" +
+                                "<mac>00:f6:63:70:c9:de</mac>\n" +
+                                "<signal>-77</signal>\n" +
+                                "<freq>5180</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-util2</name>\n" +
+                                "<mac>00:f6:63:70:c9:dc</mac>\n" +
+                                "<signal>-76</signal>\n" +
+                                "<freq>5180</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-secure</name>\n" +
+                                "<mac>00:f6:63:72:b2:ed</mac>\n" +
+                                "<signal>-80</signal>\n" +
+                                "<freq>5240</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-util2</name>\n" +
+                                "<mac>00:f6:63:72:b2:ec</mac>\n" +
+                                "<signal>-80</signal>\n" +
+                                "<freq>5240</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>eduroam</name>\n" +
+                                "<mac>00:f6:63:72:b2:ee</mac>\n" +
+                                "<signal>-80</signal>\n" +
+                                "<freq>5240</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd</name>\n" +
+                                "<mac>00:f6:63:6f:e4:df</mac>\n" +
+                                "<signal>-50</signal>\n" +
+                                "<freq>5805</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd</name>\n" +
+                                "<mac>00:f6:63:70:c9:df</mac>\n" +
+                                "<signal>-77</signal>\n" +
+                                "<freq>5180</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd</name>\n" +
+                                "<mac>00:f6:63:6f:dc:ef</mac>\n" +
+                                "<signal>-78</signal>\n" +
+                                "<freq>5220</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd</name>\n" +
+                                "<mac>00:f6:63:72:b2:ef</mac>\n" +
+                                "<signal>-80</signal>\n" +
+                                "<freq>5240</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>umd-secure</name>\n" +
+                                "<mac>00:f6:63:70:c9:d2</mac>\n" +
+                                "<signal>-54</signal>\n" +
+                                "<freq>2437</freq>\n" +
+                                "</accesspoint>\n" +
+                                "<accesspoint>\n" +
+                                "<name>eduroam</name>\n" +
+                                "<mac>00:f6:63:70:c9:d1</mac>\n" +
+                                "<signal>-54</signal>\n" +
+                                "<freq>2437</freq>\n" +
+                                "</accesspoint>\n" +
+                                "</accesspoints>\n" +
+                                "</data>";
+                        try {
+                            return postData == null ? null :
+                                    postData.getBytes(getParamsEncoding());
+                        } catch (UnsupportedEncodingException uee) {
+                            // TODO consider if some other action should be taken
+                            return null;
+                        }
+                    }
+
+                };
+
+                // Schedule the request on the queue
+                queue.add(stringRequest);
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search,menu);
+        MenuItem item = menu.findItem(R.id.menuSearch);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.v("query",query);
+                Viewpoint viewpoint = new Viewpoint(mGeocodedLocation[0].getDisplayLocation(),7000);
+                mMapView.setViewpoint(viewpoint);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(newText,mGeocodeParameters);
+                geocodeFuture.addDoneListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // Get the results of the async operation
+                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
+
+                            if (geocodeResults.size() > 0){
+                                // Use the first result - for example
+                                // display on the map
+                                mGeocodedLocation[0] = geocodeResults.get(0);
+//                                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(), mGeocodedLocation[0].getLabel());
+
+                                for(int i=0;i<geocodeResults.size();i++){
+                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
+                                }
+
+//                                Point point = new Point(mGeocodedLocation[0].getDisplayLocation().getX(),mGeocodedLocation[0].getDisplayLocation().getY(), SpatialReference.create(2229));
+//                                Viewpoint viewpoint = new Viewpoint(point,7000);
+//                                mMapView.setViewpoint(viewpoint);
+
+                            } else {
+                                if(!newText.isEmpty())
+                                    Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (InterruptedException | ExecutionException e) {
+                            // Deal with exception...
+                            e.printStackTrace();
+                        }
+                        // Done processing and can remove this listener.
+                        geocodeFuture.removeDoneListener(this);
+                    }
+                });
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     void displaySearchResult(Point resultPoint, String address) {

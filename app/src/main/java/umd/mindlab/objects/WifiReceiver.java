@@ -22,7 +22,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
-		String xml = "<?xml version=\"1.0\"?>\n<data>\n";
+		String xml = "<?xml version=\"1.0\"?>\n<deviceid>"+find.deviceID+"</deviceid>\n<data>\n";
 		if(currentLocation != null){
 			xml = xml + "<currentlocation>";
 			xml = xml + "<lat>" + currentLocation.getLatitude() + "</lat>";

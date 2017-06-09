@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -57,7 +58,7 @@ import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class LocateMeActivity extends Activity implements SensorEventListener{
+public class LocateMeActivity extends AppCompatActivity implements SensorEventListener{
 
    private static final String TAG = "LocateMeActivity";
    private static final int BUFFER_SIZE = 2048*100;
@@ -618,8 +619,7 @@ public class LocateMeActivity extends Activity implements SensorEventListener{
                HttpResponse response = client.execute(post);
                Log.v(TAG,"responseee: "+response.toString());
                Log.v(TAG, "post aborted: " + post.isAborted());
-               BufferedReader reader = new BufferedReader(new InputStreamReader(
-                       response.getEntity().getContent()));
+               BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
 
                StringBuilder builder = new StringBuilder();

@@ -2,42 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <item
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:id="@+id/ll"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal"
-        android:weightSum="1">
-        <EditText
-            android:id="@+id/location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="location"
-            android:inputType="text"
-            android:layout_weight="0.7"/>
-        <ImageButton
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/search_icon"
-            android:layout_weight="0.1"/>
-        <ImageButton
-            android:id="@+id/gpsbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/gps_icon"
-            android:layout_weight="0.1"/>
-        <ImageButton
-            android:id="@+id/wifiB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/wifi_icon"
-            android:layout_weight="0.1"/>
 
-    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:id="@+id/ll"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:weightSum="1">-->
+        <!--<EditText-->
+            <!--android:id="@+id/location"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:ems="10"-->
+            <!--android:hint="location"-->
+            <!--android:inputType="text"-->
+            <!--android:layout_weight="0.7"/>-->
+
+    <!--</LinearLayout>-->
 
     <com.esri.arcgisruntime.mapping.view.MapView
         android:id="@+id/mapView"
@@ -45,9 +27,41 @@
         android:layout_height="fill_parent"
         mapoptions.MapType="Streets"
         mapoptions.center="38.99029, -76.9361"
-        android:layout_below="@id/ll"
         mapoptions.Zoomlevel="16">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/search"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_icon"
+            android:layout_gravity="center"
+            android:background="#33000000"
+            android:layout_weight="0.1"/>
+        <ImageButton
+            android:id="@+id/gpsbutton"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gps_icon"
+            android:layout_gravity="center"
+            android:background="#33000000"
+            android:layout_weight="0.1"/>
+        <ImageButton
+            android:id="@+id/wifiB"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/wifi_icon"
+            android:layout_gravity="center"
+            android:background="#33000000"
+            android:layout_weight="0.1"/>
+        </LinearLayout>
     </com.esri.arcgisruntime.mapping.view.MapView>
+
 
 
 </RelativeLayout>
