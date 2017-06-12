@@ -64,14 +64,12 @@ public class map extends AppCompatActivity {
 
     Context context;
     private MapView mMapView;
-    EditText location;
+    //EditText location;
     ImageButton search,gpsbutton,wifibutton;
     Callout mCallout;
     LocatorTask locatorTask;
     GeocodeParameters mGeocodeParameters;
     GeocodeResult[] mGeocodedLocation = {null};
-    MaterialSearchView searchView;
-    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,13 +207,6 @@ public class map extends AppCompatActivity {
 
         locatorTask.loadAsync();
 
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
 
 //        search.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -327,26 +318,10 @@ public class map extends AppCompatActivity {
 //            }
 //        });
 
-
-        final LocationDisplay mLocationDisplay;
         // get the MapView's LocationDisplay
-        mLocationDisplay = mMapView.getLocationDisplay();
+        final LocationDisplay mLocationDisplay = mMapView.getLocationDisplay();
 
-        // Listen to changes in the status of the location data source.
-        mLocationDisplay.addDataSourceStatusChangedListener(new LocationDisplay.DataSourceStatusChangedListener() {
-            @Override
-            public void onStatusChanged(LocationDisplay.DataSourceStatusChangedEvent dataSourceStatusChangedEvent) {
-
-                // If LocationDisplay started OK, then continue.
-                if (dataSourceStatusChangedEvent.isStarted())
-                    return;
-
-                // No error is reported, then continue.
-                if (dataSourceStatusChangedEvent.getError() == null)
-                    return;
-
-            }
-        });
+        //gps button listener
         gpsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -357,6 +332,7 @@ public class map extends AppCompatActivity {
             }
         });
 
+        //wifi button listener
         wifibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -364,7 +340,7 @@ public class map extends AppCompatActivity {
                 // Create the request queue
                 RequestQueue queue = Volley.newRequestQueue(context);
 
-// Create the request object
+                // Create the request object
                 String url = "http://rovermind.cs.umd.edu:8080/LocationServer/FindLocation?type=ap";
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                         new Response.Listener<String>() {
@@ -394,7 +370,6 @@ public class map extends AppCompatActivity {
                                         }
                                     }
                                 }
-
                             }
 
                         },
@@ -555,6 +530,7 @@ public class map extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_search,menu);
         MenuItem item = menu.findItem(R.id.menuSearch);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
@@ -563,8 +539,9 @@ public class map extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.v("query",query);
-                Viewpoint viewpoint = new Viewpoint(mGeocodedLocation[0].getDisplayLocation(),7000);
-                mMapView.setViewpoint(viewpoint);
+//                Viewpoint viewpoint = new Viewpoint(mGeocodedLocation[0].getDisplayLocation(),7000);
+//                mMapView.setViewpoint(viewpoint);
+                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(),mGeocodedLocation[0].getLabel());
                 return false;
             }
 

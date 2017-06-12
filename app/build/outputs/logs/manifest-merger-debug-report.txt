@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:2:1-50:12
+ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:2:1-49:12
 	package
 		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:3:5-31
 		INJECTED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml
@@ -86,7 +86,7 @@ ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml
 	android:name
 		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:24:19-63
 application
-ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:26:5-48:19
+ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:26:5-47:19
 MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /Users/ashleyjain/.android/build-cache/e52535bdbe933d86a0bb7fc3c9004d54ce4164eb/output/AndroidManifest.xml:9:5-20
 MERGED from [com.miguelcatalan:materialsearchview:1.4.0] /Users/ashleyjain/.android/build-cache/5e7f1a3f413d3314a208e3702c1c4a64f526a3b3/output/AndroidManifest.xml:11:5-20
 MERGED from [com.android.support:design:23.1.1] /Users/ashleyjain/.android/build-cache/0d47494ea28c2e83cedcb8025d15f63127c82677/output/AndroidManifest.xml:22:5-20
@@ -130,7 +130,3 @@ activity#umd.mindlab.main.map
 ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:46:9-50
 	android:name
 		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:46:19-38
-activity#umd.mindlab.main.search_map
-ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:47:9-57
-	android:name
-		ADDED from /Users/ashleyjain/Downloads/LocateMe/app/src/main/AndroidManifest.xml:47:19-45

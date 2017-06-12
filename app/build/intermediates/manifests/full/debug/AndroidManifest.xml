@@ -47,7 +47,6 @@
         </receiver>
 
         <activity android:name="umd.mindlab.main.map" />
-        <activity android:name="umd.mindlab.main.search_map" />
     </application>
 
 </manifest>

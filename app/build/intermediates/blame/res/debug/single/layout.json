@@ -32,10 +32,6 @@
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/layout/notification_template_big_media.xml"
     },
     {
-        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/map_search.xml",
-        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/layout/map_search.xml"
-    },
-    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/abc_action_bar_view_list_nav_layout.xml",
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/layout/abc_action_bar_view_list_nav_layout.xml"
     },
@@ -162,10 +158,6 @@
     {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/notification_template_lines.xml",
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/layout/notification_template_lines.xml"
-    },
-    {
-        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/searchbar.xml",
-        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/layout/searchbar.xml"
     },
     {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_button_bar_material.xml",

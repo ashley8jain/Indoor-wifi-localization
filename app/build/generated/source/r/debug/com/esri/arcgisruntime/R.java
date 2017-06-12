@@ -20,7 +20,7 @@ public final class R {
         public static final int auth_hostname = 0x7f0d0079;
         public static final int auth_message = 0x7f0d007b;
         public static final int auth_password = 0x7f0d007d;
-        public static final int auth_remember = 0x7f0d00b8;
+        public static final int auth_remember = 0x7f0d00b3;
         public static final int auth_separator = 0x7f0d007a;
         public static final int auth_title = 0x7f0d0078;
         public static final int auth_username = 0x7f0d007c;
@@ -32,7 +32,7 @@ public final class R {
         public static final int arcgisruntime_mapview_esribanner_layout = 0x7f03001a;
         public static final int cert_dialog = 0x7f03001b;
         public static final int cred_dialog = 0x7f03001c;
-        public static final int selfsigned_dialog = 0x7f030039;
+        public static final int selfsigned_dialog = 0x7f030037;
     }
     public static final class string {
         public static final int app_name = 0x7f060015;

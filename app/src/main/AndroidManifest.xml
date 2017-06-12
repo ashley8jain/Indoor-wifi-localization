@@ -44,7 +44,6 @@
         </receiver>
 
         <activity android:name=".map"></activity>
-        <activity android:name=".search_map"></activity>
     </application>
 
 </manifest>
