@@ -20,7 +20,7 @@ public final class R {
         public static final int auth_hostname = 0x7f0d0079;
         public static final int auth_message = 0x7f0d007b;
         public static final int auth_password = 0x7f0d007d;
-        public static final int auth_remember = 0x7f0d00b3;
+        public static final int auth_remember = 0x7f0d00ac;
         public static final int auth_separator = 0x7f0d007a;
         public static final int auth_title = 0x7f0d0078;
         public static final int auth_username = 0x7f0d007c;

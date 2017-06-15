@@ -1,4 +1,4 @@
-#Fri Jun 09 12:12:10 EDT 2017
+#Thu Jun 15 16:42:46 EDT 2017
 base.0=/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_5690baf5dade224a058c7e7ee6fb345414ec6ecc
 renamed.1=classes.dex
 renamed.0=classes2.dex

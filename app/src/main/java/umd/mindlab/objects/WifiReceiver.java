@@ -1,5 +1,6 @@
 package umd.mindlab.objects;
 
+import java.io.IOException;
 import java.util.*;
 
 import umd.mindlab.main.LocateMeActivity;
@@ -22,7 +23,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
-		String xml = "<?xml version=\"1.0\"?>\n<deviceid>"+find.deviceID+"</deviceid>\n<data>\n";
+		String xml = "<?xml version=\"1.0\"?><deviceid>"+find.deviceID+"</deviceid><data>";
 		if(currentLocation != null){
 			xml = xml + "<currentlocation>";
 			xml = xml + "<lat>" + currentLocation.getLatitude() + "</lat>";
@@ -50,19 +51,19 @@ public class WifiReceiver extends BroadcastReceiver {
 			System.out.println(mac + "," + name+","+signalStrength + "," + freq);			
 		}
 		
-		xml = xml + "<accesspoints>\n";
+		xml = xml + "<accesspoints>";
 		
 		for (ScanResult result : results) {
 			String mac = result.BSSID.trim();
 			String name = result.SSID.trim();
 			int signalStrength = result.level;
 			int freq = result.frequency;
-			xml = xml + "<accesspoint>\n";
-			xml = xml + "<name>" + name + "</name>\n";
-			xml = xml + "<mac>" + mac + "</mac>\n";
-			xml = xml + "<signal>" + signalStrength + "</signal>\n";
-			xml = xml + "<freq>" + freq + "</freq>\n";
-			xml = xml + "</accesspoint>\n";	
+			xml = xml + "<accesspoint>";
+			xml = xml + "<name>" + name + "</name>";
+			xml = xml + "<mac>" + mac + "</mac>";
+			xml = xml + "<signal>" + signalStrength + "</signal>";
+			xml = xml + "<freq>" + freq + "</freq>";
+			xml = xml + "</accesspoint>";
 			// textStatus.append("\n\n" + result.toString());
 			/*if (!listAccessPoints.containsKey(mac)) {
 				listAccessPoints.put(mac, signalStrength);
@@ -78,7 +79,7 @@ public class WifiReceiver extends BroadcastReceiver {
 			}*/
 			
 		}
-		xml = xml + "</accesspoints>\n</data>\n";
+		xml = xml + "</accesspoints></data>";
 				
 		//System.out.println("Number of unique MAC addresses: " + listAccessPoints.size());
 		
@@ -93,10 +94,20 @@ public class WifiReceiver extends BroadcastReceiver {
 			xml = xml + "</accesspoint>\n";				
 		}
 		xml = xml + "</accesspoints>\n</data>\n";*/
-				
+
+		Calendar rightNow = Calendar.getInstance();
+		String str="";
+		str+=find.dateFormat.format(rightNow.getTime());
+		str+=","+xml+"\n";
 		find.xml = xml;
-		
-		(new SendWifiInfoTask(find)).execute(xml);
+		if(find.xml_W!=null){
+			try {
+				find.xml_W.write(str);
+				find.xml_W.flush();
+			} catch (IOException e) {
+			}
+		}
+//		(new SendWifiInfoTask(find)).execute(xml);
 		Log.v(TAG, xml);
 		if(LocateMeActivity.count > 0){
 			find.wifi.startScan(); 

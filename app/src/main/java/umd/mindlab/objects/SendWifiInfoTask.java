@@ -46,67 +46,20 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 
 		Log.v(TAG, post.getMethod());
 		Log.v(TAG, post.getURI().toASCIIString());
-
-		MultipartEntity entity = new MultipartEntity();
-		try {
-			entity.addPart("data", new InputStreamBody(
-					new ByteArrayInputStream(params[0].getBytes()), "text/xml",
-					"ap"));
-
-			post.setEntity(entity);
-
-			Log.v(TAG, "sending info");
-			HttpResponse response = client.execute(post);
-			Log.v(TAG, "post aborted: " + post.isAborted());
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					response.getEntity().getContent()));
-
-			StringBuilder builder = new StringBuilder();
-			String line = "\n";
-			line = line + "\n";
-			while ((line = reader.readLine()) != null) {
-				builder.append(line);
-				builder.append("\n");
-				Log.v(TAG, line + "\n");
-			}
-			String serverResponse = builder.toString();
-			Log.v(TAG, "server response: " + serverResponse);
-			displayString = serverResponse;
-			//System.out.println("Got the server response" + displayString);
-
-		} catch (UnsupportedEncodingException e) {
-			Log.v(TAG, e.getMessage());
-		} catch (IOException e) {
-			Log.v(TAG, e.getMessage());
-		} finally {
-			client.close();
-			Log.v(TAG, "right before the return");
-			Log.v(TAG, displayString);
-		}
-
-
-
-
-//		Log.v(TAG,"device: "+fma.deviceID);
-
-//		File file = new File(Environment.getExternalStorageDirectory().getPath(),
-//				fma.deviceID+".zip");
 //
-//		Log.v(TAG,file.exists()+" hereeeeee");
-//		InputStreamEntity reqEntity = null;
+//		MultipartEntity entity = new MultipartEntity();
 //		try {
-//			reqEntity = new InputStreamEntity(
-//                    new FileInputStream(file), -1);
-//			reqEntity.setContentType("binary/octet-stream");
-//			reqEntity.setChunked(true); // Send in multiple parts if needed
-//			post.setEntity(reqEntity);
+//			entity.addPart("data", new InputStreamBody(
+//					new ByteArrayInputStream(params[0].getBytes()), "text/xml",
+//					"ap"));
+//
+//			post.setEntity(entity);
+//
 //			Log.v(TAG, "sending info");
 //			HttpResponse response = client.execute(post);
-//			Log.v(TAG,"responseee: "+response.toString());
 //			Log.v(TAG, "post aborted: " + post.isAborted());
 //			BufferedReader reader = new BufferedReader(new InputStreamReader(
 //					response.getEntity().getContent()));
-//
 //
 //			StringBuilder builder = new StringBuilder();
 //			String line = "\n";
@@ -116,20 +69,67 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 //				builder.append("\n");
 //				Log.v(TAG, line + "\n");
 //			}
-//
 //			String serverResponse = builder.toString();
 //			Log.v(TAG, "server response: " + serverResponse);
 //			displayString = serverResponse;
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
+//			//System.out.println("Got the server response" + displayString);
+//
+//		} catch (UnsupportedEncodingException e) {
+//			Log.v(TAG, e.getMessage());
 //		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		finally {
+//			Log.v(TAG, e.getMessage());
+//		} finally {
 //			client.close();
 //			Log.v(TAG, "right before the return");
 //			Log.v(TAG, displayString);
 //		}
+
+
+		Log.v(TAG,"device: "+fma.deviceID);
+
+		File file = new File(Environment.getExternalStorageDirectory().getPath(),
+				fma.deviceID+".zip");
+
+		Log.v(TAG,file.exists()+" hereeeeee");
+		InputStreamEntity reqEntity = null;
+		try {
+			reqEntity = new InputStreamEntity(
+                    new FileInputStream(file), -1);
+			reqEntity.setContentType("binary/octet-stream");
+			reqEntity.setChunked(true); // Send in multiple parts if needed
+			post.setEntity(reqEntity);
+			Log.v(TAG, "sending info");
+			HttpResponse response = client.execute(post);
+			Log.v(TAG,"responseee: "+response.toString());
+			Log.v(TAG, "post aborted: " + post.isAborted());
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
+
+
+			StringBuilder builder = new StringBuilder();
+			String line = "\n";
+			line = line + "\n";
+			while ((line = reader.readLine()) != null) {
+				builder.append(line);
+				builder.append("\n");
+				Log.v(TAG, line + "\n");
+			}
+
+			String serverResponse = builder.toString();
+			Log.v(TAG, "server response: " + serverResponse);
+			displayString = serverResponse;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			client.close();
+			Log.v(TAG, "right before the return");
+			Log.v(TAG, displayString);
+		}
+		Log.v("here","hereee");
+		file.delete();
 		return displayString;
 
 	}

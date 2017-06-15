@@ -1,5 +1,6 @@
 package umd.mindlab.main;
 
+import umd.mindlab.objects.SendWifiInfoTask;
 import umd.mindlab.objects.WifiReceiver;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +24,7 @@ import android.net.http.AndroidHttpClient;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,11 +75,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    private Sensor laccSensor,gyroSensor,gravSensor,acceleroSensor,magneticSensor,baroSensor;
    private SensorEventListener SEL;
    String strr;
-   TextView textStatus;
+   TextView textStatus,timerText;
    TextView laccStatus,gpsloc,gyroStatus,gravStatus,acceleroStatus,magStatus,baroStatus;
    Button update;
-   Button mapp;
+   ImageButton mapp;
+   Button start;
    Context context;
+   Handler handler;
+   int Hours, Seconds, Minutes, MilliSeconds;
+   long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
    //Button verify;
 
    LocationManager locationManager;
@@ -87,13 +94,13 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    private Timer myTimer;
 
    String path=Environment.getExternalStorageDirectory().getPath()+"/datas";
-   String path2=Environment.getExternalStorageDirectory().getPath()+"/gps_data";
    File accelero_file,lacc_file,gyro_file,grav_file,magn_file,baro_file;
-   File gps_file;
+   File gps_file,xml_file;
    FileWriter accelero_W,lacc_W,gyro_W,grav_W,magn_W,baro_W;
    FileWriter gps_W;
+   public FileWriter xml_W;
 
-   DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+   public DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
    public void onCreate(Bundle savedInstanceState) {
 
@@ -103,6 +110,10 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       context = this;
       SEL = this;
       telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+
+      start = (Button) findViewById(R.id.start);
+      start.setText("Start");
+
       if (receiver == null) {
          wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
          receiver = new WifiReceiver(this);
@@ -123,7 +134,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       SM.registerListener(this,acceleroSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,magneticSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,baroSensor,SensorManager.SENSOR_DELAY_NORMAL);
-      gpsloc = (TextView) findViewById(R.id.gpslocation);
+//      gpsloc = (TextView) findViewById(R.id.gpslocation);
       // Acquire a reference to the system Location Manager
       locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -131,19 +142,19 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          buildAlertMessageNoGps();
       }
 
-      myTimer = new Timer();
-      myTimer.schedule(new TimerTask() {
-         @Override
-         public void run() {
-            try {
-               sendGPS();
-               Log.v(TAG,"timer");
-            } catch (IOException e) {
-               e.printStackTrace();
-            }
-         }
-
-      }, 0, 600000);
+//      myTimer = new Timer();
+//      myTimer.schedule(new TimerTask() {
+//         @Override
+//         public void run() {
+//            try {
+//               sendGPS();
+//               Log.v(TAG,"timer");
+//            } catch (IOException e) {
+//               e.printStackTrace();
+//            }
+//         }
+//
+//      }, 0, 600000);
 
       // Define a listener that responds to location updates
       loclist = new LocationListener() {
@@ -183,18 +194,18 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
                strr+=city+" "+state+" "+country+" "+postalCode;
 
-
             } catch (IOException e) {
                e.printStackTrace();
             }
 
-            gpsloc.setText(str);
+            //gpsloc.setText(str);
 
             try {
-               gps_W.append(strr);
-               gps_W.flush();
+               if(gps_W!=null){
+                  gps_W.append(strr);
+                  gps_W.flush();
+               }
             } catch (IOException e) {
-               e.printStackTrace();
             }
          }
 
@@ -206,6 +217,110 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       };
 
       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,120000,0,loclist);
+
+      handler = new Handler();
+
+      final boolean[] start_B = {false};
+      start.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            if(!start_B[0]) {
+               start_B[0] =true;
+               start.setText("Stop");
+
+               StartTime = SystemClock.uptimeMillis();
+               handler.postDelayed(runnable, 0);
+
+               try {
+                  accelero_W = new FileWriter(accelero_file);
+                  lacc_W = new FileWriter(lacc_file);
+                  gyro_W = new FileWriter(gyro_file);
+                  magn_W = new FileWriter(magn_file);
+                  grav_W = new FileWriter(grav_file);
+                  baro_W = new FileWriter(baro_file);
+                  gps_W = new FileWriter(gps_file);
+                  xml_W = new FileWriter(xml_file);
+
+                  myTimer = new Timer();
+                  myTimer.schedule(new TimerTask() {
+                     @Override
+                     public void run(){
+                        Log.v(TAG,"wifiscan");
+                        setUp();
+                     }
+                  }, 0, 600000);
+
+                  accelero_W.append("date_time,X,Y,Z\n");
+                  lacc_W.append("date_time,X,Y,Z\n");
+                  gyro_W.append("date_time,X,Y,Z\n");
+                  magn_W.append("date_time,X,Y,Z\n");
+                  grav_W.append("date_time,X,Y,Z\n");
+                  gps_W.append("Time,Lat,Long,Altitude,Address\n");
+                  xml_W.append("Time,XML_data\n");
+
+                  accelero_W.flush();
+                  lacc_W.flush();
+                  gyro_W.flush();
+                  magn_W.flush();
+                  grav_W.flush();
+                  gps_W.flush();
+                  xml_W.flush();
+               } catch (IOException e) {
+                  e.printStackTrace();
+               }
+            }
+            else{
+               start_B[0]=false;
+
+               TimeBuff += MillisecondTime;
+               handler.removeCallbacks(runnable);
+
+               myTimer.cancel();
+
+               MillisecondTime = 0L ;
+               StartTime = 0L ;
+               TimeBuff = 0L ;
+               UpdateTime = 0L ;
+               Seconds = 0 ;
+               Minutes = 0 ;
+               MilliSeconds = 0 ;
+
+               //sensor datas zip
+               try{
+                  accelero_W.close();
+                  lacc_W.close();
+                  magn_W.close();
+                  gyro_W.close();
+                  grav_W.close();
+                  baro_W.close();
+                  gps_W.close();
+                  xml_W.close();
+
+                  FileOutputStream fileOutputStream;
+                  ZipOutputStream zipOutputStream =  null;
+                  Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
+
+                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
+
+                  File file = new File(destination);
+                  if (!file.exists())
+                     file.createNewFile();
+
+                  fileOutputStream = new FileOutputStream(file);
+                  zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
+                  zipFile(zipOutputStream, path+"/");
+
+               } catch (IOException e) {
+                  e.printStackTrace();
+               }
+
+               //send file
+               (new SendWifiInfoTask(LocateMeActivity.this)).execute(xml);
+               start.setText("Start");
+            }
+
+         }
+      });
 
    }
 
@@ -234,75 +349,17 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
       }
 
-      laccStatus = (TextView) findViewById(R.id.accCoord);
-      gyroStatus = (TextView) findViewById(R.id.gyroCoord);
-      gravStatus = (TextView) findViewById(R.id.gravStatus);
-      magStatus = (TextView) findViewById(R.id.magStatus);
-      acceleroStatus = (TextView) findViewById(R.id.accelero);
-      baroStatus = (TextView) findViewById(R.id.barStatus);
-      update = (Button) findViewById(R.id.update);
-      mapp = (Button) findViewById(R.id.other);
+//      laccStatus = (TextView) findViewById(R.id.accCoord);
+//      gyroStatus = (TextView) findViewById(R.id.gyroCoord);
+//      gravStatus = (TextView) findViewById(R.id.gravStatus);
+//      magStatus = (TextView) findViewById(R.id.magStatus);
+//      acceleroStatus = (TextView) findViewById(R.id.accelero);
+//      baroStatus = (TextView) findViewById(R.id.barStatus);
+//      update = (Button) findViewById(R.id.update);
+      mapp = (ImageButton) findViewById(R.id.other);
+
       deviceID = telephonyManager.getDeviceId();
-
-      mapp.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            Intent intent = new Intent(context,map.class);
-            startActivity(intent);
-         }
-      });
-
-      update.setOnClickListener(new View.OnClickListener() {
-         public void onClick(View v) {
-
-            if (count > 0) {
-               count++;
-               Toast.makeText(
-                     LocateMeActivity.this,
-                     "Currently, on " + count
-                           + " iteration, cannot start another scan",
-                     Toast.LENGTH_LONG).show();
-            } else {
-               try {
-                  Toast.makeText(LocateMeActivity.this,
-                          "Scan in progress...", Toast.LENGTH_LONG).show();
-                  SM.unregisterListener(SEL,acceleroSensor);
-                  SM.unregisterListener(SEL,gyroSensor);
-                  SM.unregisterListener(SEL,gravSensor);
-                  SM.unregisterListener(SEL,laccSensor);
-                  SM.unregisterListener(SEL,magneticSensor);
-                  SM.unregisterListener(SEL,baroSensor);
-                  accelero_W.close();
-                  lacc_W.close();
-                  magn_W.close();
-                  gyro_W.close();
-                  grav_W.close();
-                  baro_W.close();
-
-                  FileOutputStream fileOutputStream;
-                  ZipOutputStream zipOutputStream =  null;
-                  Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
-
-                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
-
-                  File file = new File(destination);
-                  if (!file.exists())
-                     file.createNewFile();
-
-                  fileOutputStream = new FileOutputStream(file);
-                  zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
-
-                  zipFile(zipOutputStream, path+"/");
-
-               } catch (IOException e) {
-                  e.printStackTrace();
-               }
-
-               System.out.println("here....\n\n");
-               setUp();
-            }
-         }
-      });
+      timerText = (TextView) findViewById(R.id.timer);
 
       File dir = new File(path);
       dir.mkdirs();
@@ -312,36 +369,65 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       magn_file = new File(path,"magn_data.csv");
       grav_file = new File(path,"grav_data.csv");
       baro_file = new File(path,"baro_data.csv");
+      xml_file = new File(path,"xml.csv");
+      gps_file = new File(path,"gps.csv");
 
-      File dir2 = new File(path2);
-      dir2.mkdirs();
+      mapp.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(context,map.class);
+            startActivity(intent);
+         }
+      });
 
-      gps_file = new File(path2,"gps.csv");
-      try {
-         accelero_W = new FileWriter(accelero_file);
-         lacc_W = new FileWriter(lacc_file);
-         gyro_W = new FileWriter(gyro_file);
-         magn_W = new FileWriter(magn_file);
-         grav_W = new FileWriter(grav_file);
-         baro_W = new FileWriter(baro_file);
-         gps_W = new FileWriter(gps_file);
-
-         accelero_W.append("date_time,X,Y,Z\n");
-         lacc_W.append("date_time,X,Y,Z\n");
-         gyro_W.append("date_time,X,Y,Z\n");
-         magn_W.append("date_time,X,Y,Z\n");
-         grav_W.append("date_time,X,Y,Z\n");
-         gps_W.append("Time,Lat,Long,Altitude,Address\n");
-
-         accelero_W.flush();
-         lacc_W.flush();
-         gyro_W.flush();
-         magn_W.flush();
-         grav_W.flush();
-         gps_W.flush();
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
+//      update.setOnClickListener(new View.OnClickListener() {
+//         public void onClick(View v) {
+//
+//            if (count > 0) {
+//               count++;
+//               Toast.makeText(
+//                     LocateMeActivity.this,
+//                     "Currently, on " + count
+//                           + " iteration, cannot start another scan",
+//                     Toast.LENGTH_LONG).show();
+//            } else {
+//                  Toast.makeText(LocateMeActivity.this,
+//                          "Scan in progress...", Toast.LENGTH_LONG).show();
+////                  SM.unregisterListener(SEL,acceleroSensor);
+////                  SM.unregisterListener(SEL,gyroSensor);
+////                  SM.unregisterListener(SEL,gravSensor);
+////                  SM.unregisterListener(SEL,laccSensor);
+////                  SM.unregisterListener(SEL,magneticSensor);
+////                  SM.unregisterListener(SEL,baroSensor);
+//
+//
+////                  accelero_W.close();
+////                  lacc_W.close();
+////                  magn_W.close();
+////                  gyro_W.close();
+////                  grav_W.close();
+////                  baro_W.close();
+////
+////                  FileOutputStream fileOutputStream;
+////                  ZipOutputStream zipOutputStream =  null;
+////                  Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
+////
+////                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
+////
+////                  File file = new File(destination);
+////                  if (!file.exists())
+////                     file.createNewFile();
+////
+////                  fileOutputStream = new FileOutputStream(file);
+////                  zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
+////
+////                  zipFile(zipOutputStream, path+"/");
+//
+//               System.out.println("here....\n\n");
+//               setUp();
+//            }
+//         }
+//      });
 
 
 
@@ -369,9 +455,6 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
             }
          }
       });       */
-
-
-
 
    }
 
@@ -405,12 +488,16 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       locationManager.removeUpdates(loclist);
 
       try {
-         accelero_W.close();
-         lacc_W.close();
-         magn_W.close();
-         gyro_W.close();
-         grav_W.close();
-         baro_W.close();
+         if(accelero_W!=null) {
+            accelero_W.close();
+            lacc_W.close();
+            magn_W.close();
+            gyro_W.close();
+            grav_W.close();
+            baro_W.close();
+            gps_W.close();
+            xml_W.close();
+         }
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -432,16 +519,16 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    private void setUp() {
       if (!isConnected(getApplicationContext())) {
-         Toast.makeText(
-               this,
-               "You are not connected to the internet, adjust your settings!",
-               Toast.LENGTH_LONG).show();
+//         Toast.makeText(
+//               context,
+//               "You are not connected to the internet, adjust your settings!",
+//               Toast.LENGTH_LONG).show();
          finish();
       } else {
          wifi.startScan();
-         //Log.v(TAG, currentLocation + "");
-         Toast.makeText(this, "Click locate to refresh results",
-               Toast.LENGTH_LONG).show();
+//         //Log.v(TAG, currentLocation + "");
+//         Toast.makeText(context, "Click locate to refresh results",
+//               Toast.LENGTH_LONG).show();
       }
    }
 
@@ -463,9 +550,9 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
      Calendar rightNow = Calendar.getInstance();
 
      if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-        acceleroStatus.setText("Accelerometer (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-                "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-                "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+//        acceleroStatus.setText("Accelerometer (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+//                "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+//                "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
 
         String string = dateFormat.format(rightNow.getTime())+
               ","+String.format("%.1f", sensorEvent.values[0])+
@@ -476,18 +563,18 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 //                 Toast.LENGTH_LONG).show();
 
         try {
-
-           accelero_W.append(string);
-           accelero_W.flush();
+           if(accelero_W!=null) {
+              accelero_W.append(string);
+              accelero_W.flush();
+           }
 
         } catch (Exception e) {
-           e.printStackTrace();
         }
      }
      if(sensorEvent.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION) {
-        laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-              "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-              "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+//        laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
+//              "\nY:" + String.format("%.1f", sensorEvent.values[1])+
+//              "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
 
         String string = dateFormat.format(rightNow.getTime())+
                 ","+String.format("%.1f", sensorEvent.values[0])+
@@ -495,12 +582,12 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
 
         try {
-
-           lacc_W.append(string);
-           lacc_W.flush();
+            if(lacc_W!=null) {
+               lacc_W.append(string);
+               lacc_W.flush();
+            }
 
         } catch (Exception e) {
-           e.printStackTrace();
         }
      }
      if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE){
@@ -514,12 +601,12 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
 
         try {
-
-           gyro_W.append(string);
-           gyro_W.flush();
+           if(gyro_W!=null) {
+              gyro_W.append(string);
+              gyro_W.flush();
+           }
 
         } catch (Exception e) {
-           e.printStackTrace();
         }
      }
      if(sensorEvent.sensor.getType() == Sensor.TYPE_GRAVITY){
@@ -533,17 +620,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
 
         try {
-
-           grav_W.append(string);
-           grav_W.flush();
+           if(grav_W!=null) {
+              grav_W.append(string);
+              grav_W.flush();
+           }
 
         } catch (Exception e) {
-           e.printStackTrace();
         }
      }
      if(sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-//
-
 
         String string = dateFormat.format(rightNow.getTime())+
                 ","+String.format("%.1f", sensorEvent.values[0])+
@@ -551,16 +636,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                 "," + String.format("%.1f", sensorEvent.values[2])+"\n";
 
         try {
-
-           magn_W.append(string);
-           magn_W.flush();
-
+           if(magn_W!=null) {
+              magn_W.append(string);
+              magn_W.flush();
+           }
         } catch (Exception e) {
-           e.printStackTrace();
         }
      }
      if(sensorEvent.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY){
-        baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
+//        baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
      }
 
    }
@@ -577,7 +661,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          ZipOutputStream zipOutputStream =  null;
          //Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
 
-         String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+"_gps.zip";
+         String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
 
          File file2 = new File(destination);
          if (!file2.exists())
@@ -586,7 +670,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          fileOutputStream = new FileOutputStream(file2);
          zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
 
-         zipFile(zipOutputStream, path2+"/");
+         zipFile(zipOutputStream,path+"/");
 
          //send file
          String URI = "http://rovermind.cs.umd.edu:8080/LocationServer/FindLocation?type=ap";
@@ -599,7 +683,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          Log.v(TAG, post.getURI().toASCIIString());
 
          Log.v(TAG,"send");
-         File file = new File(Environment.getExternalStorageDirectory().getPath(),deviceID+"_gps.zip");
+         File file = new File(Environment.getExternalStorageDirectory().getPath(),deviceID+".zip");
 
            Log.v(TAG,file.exists()+" hereeeeee");
            InputStreamEntity reqEntity = null;
@@ -677,6 +761,31 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    }
 
+   public Runnable runnable = new Runnable() {
+
+      public void run() {
+
+         MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+
+         UpdateTime = TimeBuff + MillisecondTime;
+
+         Seconds = (int) (UpdateTime / 1000);
+
+         Minutes = Seconds / 60;
+
+         Hours = Minutes / 60;
+
+         Seconds = Seconds % 60;
+
+         MilliSeconds = (int) (UpdateTime % 1000);
+
+         timerText.setText(String.format("%02d", Hours)+":"+ String.format("%02d", (Minutes%60)) + ":"
+                 + String.format("%02d", Seconds));
+
+         handler.postDelayed(this, 0);
+      }
+
+   };
 
 
 
