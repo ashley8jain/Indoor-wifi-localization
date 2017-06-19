@@ -604,10 +604,10 @@ public final class R {
         public static final int customPanel = 0x7f0d0057;
         public static final int decor_content_parent = 0x7f0d0060;
         public static final int default_activity_button = 0x7f0d0048;
-        public static final int design_menu_item_action_area = 0x7f0d0084;
-        public static final int design_menu_item_action_area_stub = 0x7f0d0083;
-        public static final int design_menu_item_text = 0x7f0d0082;
-        public static final int design_navigation_view = 0x7f0d0081;
+        public static final int design_menu_item_action_area = 0x7f0d0083;
+        public static final int design_menu_item_action_area_stub = 0x7f0d0082;
+        public static final int design_menu_item_text = 0x7f0d0081;
+        public static final int design_navigation_view = 0x7f0d0080;
         public static final int disableHome = 0x7f0d0017;
         public static final int edit_query = 0x7f0d0064;
         public static final int end = 0x7f0d0029;
@@ -637,7 +637,7 @@ public final class R {
         public static final int middle = 0x7f0d003a;
         public static final int mini = 0x7f0d0038;
         public static final int multiply = 0x7f0d002f;
-        public static final int navigation_header_container = 0x7f0d0080;
+        public static final int navigation_header_container = 0x7f0d007f;
         public static final int never = 0x7f0d003e;
         public static final int none = 0x7f0d0013;
         public static final int normal = 0x7f0d0015;
@@ -669,8 +669,8 @@ public final class R {
         public static final int showCustom = 0x7f0d0019;
         public static final int showHome = 0x7f0d001a;
         public static final int showTitle = 0x7f0d001b;
-        public static final int snackbar_action = 0x7f0d007f;
-        public static final int snackbar_text = 0x7f0d007e;
+        public static final int snackbar_action = 0x7f0d007e;
+        public static final int snackbar_text = 0x7f0d007d;
         public static final int snap = 0x7f0d0021;
         public static final int spacer = 0x7f0d004d;
         public static final int split_action_bar = 0x7f0d0008;

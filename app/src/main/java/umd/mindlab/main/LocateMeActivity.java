@@ -65,14 +65,14 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    private static final String TAG = "LocateMeActivity";
    private static final int BUFFER_SIZE = 2048*100;
-   public WifiManager wifi;
+   public static WifiManager wifi;
    BroadcastReceiver receiver;
    public TelephonyManager telephonyManager;
-   public String deviceID;
+   public static String deviceID;
    public String xml;
    public String address;
    private SensorManager SM;
-   private Sensor laccSensor,gyroSensor,gravSensor,acceleroSensor,magneticSensor,baroSensor;
+   private Sensor laccSensor,gyroSensor,gravSensor,acceleroSensor,magneticSensor,baroSensor,step_counter;
    private SensorEventListener SEL;
    String strr;
    TextView textStatus,timerText;
@@ -84,6 +84,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    Handler handler;
    int Hours, Seconds, Minutes, MilliSeconds;
    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
+   boolean start_wifiscan=false;
    //Button verify;
 
    LocationManager locationManager;
@@ -107,6 +108,8 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       count = 0;
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
+      Log.v("OnCreate","OnCreate");
+
       context = this;
       SEL = this;
       telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
@@ -128,12 +131,14 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       acceleroSensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
       magneticSensor = SM.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
       baroSensor = SM.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+      step_counter = SM.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
       SM.registerListener(this,laccSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,gravSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,acceleroSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,magneticSensor,SensorManager.SENSOR_DELAY_NORMAL);
       SM.registerListener(this,baroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+      SM.registerListener(this,step_counter,SensorManager.SENSOR_DELAY_NORMAL);
 //      gpsloc = (TextView) findViewById(R.id.gpslocation);
       // Acquire a reference to the system Location Manager
       locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -216,7 +221,31 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          public void onProviderDisabled(String provider) {}
       };
 
-      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,120000,0,loclist);
+      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,300000,0,loclist);
+
+      mapp = (ImageButton) findViewById(R.id.other);
+
+      deviceID = telephonyManager.getDeviceId();
+      timerText = (TextView) findViewById(R.id.timer);
+
+      File dir = new File(path);
+      dir.mkdirs();
+      accelero_file = new File(path,"Accelero_data.csv");
+      lacc_file = new File(path,"linear_acc_data.csv");
+      gyro_file = new File(path,"gyro_data.csv");
+      magn_file = new File(path,"magn_data.csv");
+      grav_file = new File(path,"grav_data.csv");
+      baro_file = new File(path,"baro_data.csv");
+      xml_file = new File(path,"xml.csv");
+      gps_file = new File(path,"gps.csv");
+
+      mapp.setOnClickListener(new View.OnClickListener(){
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(context,map.class);
+            startActivity(intent);
+         }
+      });
 
       handler = new Handler();
 
@@ -226,6 +255,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          public void onClick(View v) {
             if(!start_B[0]) {
                start_B[0] =true;
+               start_wifiscan=true;
                start.setText("Stop");
 
                StartTime = SystemClock.uptimeMillis();
@@ -248,7 +278,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                         Log.v(TAG,"wifiscan");
                         setUp();
                      }
-                  }, 0, 600000);
+                  }, 0, 30000);
 
                   accelero_W.append("date_time,X,Y,Z\n");
                   lacc_W.append("date_time,X,Y,Z\n");
@@ -271,6 +301,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
             }
             else{
                start_B[0]=false;
+               start_wifiscan=false;
 
                TimeBuff += MillisecondTime;
                handler.removeCallbacks(runnable);
@@ -316,6 +347,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
                //send file
                (new SendWifiInfoTask(LocateMeActivity.this)).execute(xml);
+//               setUp();
                start.setText("Start");
             }
 
@@ -341,6 +373,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    @Override
    public void onStart() {
       super.onStart();
+      Log.v("OnStart","OnStart");
 
       if (receiver == null) {
          wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -348,37 +381,14 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          registerReceiver(receiver, new IntentFilter(
                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
       }
-
-//      laccStatus = (TextView) findViewById(R.id.accCoord);
+      laccStatus = (TextView) findViewById(R.id.accCoord);
 //      gyroStatus = (TextView) findViewById(R.id.gyroCoord);
 //      gravStatus = (TextView) findViewById(R.id.gravStatus);
 //      magStatus = (TextView) findViewById(R.id.magStatus);
 //      acceleroStatus = (TextView) findViewById(R.id.accelero);
 //      baroStatus = (TextView) findViewById(R.id.barStatus);
 //      update = (Button) findViewById(R.id.update);
-      mapp = (ImageButton) findViewById(R.id.other);
 
-      deviceID = telephonyManager.getDeviceId();
-      timerText = (TextView) findViewById(R.id.timer);
-
-      File dir = new File(path);
-      dir.mkdirs();
-      accelero_file = new File(path,"Accelero_data.csv");
-      lacc_file = new File(path,"linear_acc_data.csv");
-      gyro_file = new File(path,"gyro_data.csv");
-      magn_file = new File(path,"magn_data.csv");
-      grav_file = new File(path,"grav_data.csv");
-      baro_file = new File(path,"baro_data.csv");
-      xml_file = new File(path,"xml.csv");
-      gps_file = new File(path,"gps.csv");
-
-      mapp.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            Intent intent = new Intent(context,map.class);
-            startActivity(intent);
-         }
-      });
 
 //      update.setOnClickListener(new View.OnClickListener() {
 //         public void onClick(View v) {
@@ -424,7 +434,8 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 ////                  zipFile(zipOutputStream, path+"/");
 //
 //               System.out.println("here....\n\n");
-//               setUp();
+//               wifi.startScan();
+//
 //            }
 //         }
 //      });
@@ -460,6 +471,8 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    protected void onResume() {
       super.onResume();
+      Log.v("OnResume","OnResume");
+
       if (receiver == null) {
          wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
          receiver = new WifiReceiver(this);
@@ -472,10 +485,13 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    public void onStop() {
       count = 0;
       super.onStop();
+      Log.v("OnStop","OnStop");
    }
 
    public void onDestroy() {
       super.onDestroy();
+      Log.v("OnDestroy","OnDestroy");
+
       if (receiver != null) {
          unregisterReceiver(receiver);
       }
@@ -506,6 +522,8 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    public void onPause() {
       count = 0;
       super.onPause();
+      Log.v("OnPause","OnPause");
+
    }
 
    protected void onSaveInstanceState(Bundle outState) {
@@ -543,109 +561,174 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       return networkInfo == null?false:networkInfo.isConnected();
    }
 
+   float old_steps=0,new_steps=0;
+   float olaccX=0,nlaccX=0,olaccY=0,nlaccY=0,olaccZ=0,nlaccZ=0;
+   float oaccX=0,naccX=0,oaccY=0,naccY=0,oaccZ=0,naccZ=0;
+   float ogyroX=0,ngyroX=0,ogyroY=0,ngyroY=0,ogyroZ=0,ngyroZ=0;
+   float ogravX=0,ngravX=0,ogravY=0,ngravY=0,ogravZ=0,ngravZ=0;
+   float omagnX=0,nmagnX=0,omagnY=0,nmagnY=0,omagnZ=0,nmagnZ=0;
 
    @Override
    public void onSensorChanged(SensorEvent sensorEvent) {
 
      Calendar rightNow = Calendar.getInstance();
 
-     if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-//        acceleroStatus.setText("Accelerometer (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-//                "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-//                "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+      switch(sensorEvent.sensor.getType()){
+         case Sensor.TYPE_STEP_COUNTER:
+            laccStatus.setText("Step_counter:"+sensorEvent.values[0]);
+            new_steps = sensorEvent.values[0];
+            if(Math.abs(new_steps-old_steps)>=3&&start_wifiscan){
+               old_steps = new_steps;
+               Log.v(TAG,"wifiscan");
+               setUp();
+            }
+            break;
+         case Sensor.TYPE_ACCELEROMETER:
+            naccX = sensorEvent.values[0];
+            naccY = sensorEvent.values[1];
+            naccZ = sensorEvent.values[2];
+            if((Math.abs(naccX-oaccX))>1||(Math.abs(naccY-oaccY))>1||(Math.abs(naccZ-oaccZ))>1) {
+//           acceleroStatus.setText("Accelerometer (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0]) +
+//                   "\nY:" + String.format("%.1f", sensorEvent.values[1]) +
+//                   "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
 
-        String string = dateFormat.format(rightNow.getTime())+
-              ","+String.format("%.1f", sensorEvent.values[0])+
-              "," + String.format("%.1f", sensorEvent.values[1])+
-              "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-        //Log.v(TAG,string);
+               String string = dateFormat.format(rightNow.getTime()) +
+                       "," + String.format("%.1f", sensorEvent.values[0]) +
+                       "," + String.format("%.1f", sensorEvent.values[1]) +
+                       "," + String.format("%.1f", sensorEvent.values[2]) + "\n";
+
+               //Log.v(TAG,string);
 //         Toast.makeText(this, dateFormat.format(rightNow.getTimeInMillis())+"",
 //                 Toast.LENGTH_LONG).show();
 
-        try {
-           if(accelero_W!=null) {
-              accelero_W.append(string);
-              accelero_W.flush();
-           }
+               try {
+                  if (accelero_W != null) {
+                     accelero_W.append(string);
+                     accelero_W.flush();
+                  }
 
-        } catch (Exception e) {
-        }
-     }
-     if(sensorEvent.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION) {
-//        laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
-//              "\nY:" + String.format("%.1f", sensorEvent.values[1])+
-//              "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
-
-        String string = dateFormat.format(rightNow.getTime())+
-                ","+String.format("%.1f", sensorEvent.values[0])+
-                "," + String.format("%.1f", sensorEvent.values[1])+
-                "," + String.format("%.1f", sensorEvent.values[2])+"\n";
-
-        try {
-            if(lacc_W!=null) {
-               lacc_W.append(string);
-               lacc_W.flush();
+               } catch (Exception e) {
+               }
+               oaccX = naccX;
+               oaccY = naccY;
+               oaccZ = naccZ;
             }
+            break;
+         case Sensor.TYPE_LINEAR_ACCELERATION:
+            nlaccX = sensorEvent.values[0];
+            nlaccY = sensorEvent.values[1];
+            nlaccZ = sensorEvent.values[2];
+            if((Math.abs(nlaccX-olaccX))>1||(Math.abs(nlaccY-olaccY))>1||(Math.abs(nlaccZ-olaccZ))>1) {
+//           laccStatus.setText("Linear Acceleration (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0]) +
+//                   "\nY:" + String.format("%.1f", sensorEvent.values[1]) +
+//                   "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
 
-        } catch (Exception e) {
-        }
-     }
-     if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE){
+               String string = dateFormat.format(rightNow.getTime()) +
+                       "," + String.format("%.1f", sensorEvent.values[0]) +
+                       "," + String.format("%.1f", sensorEvent.values[1]) +
+                       "," + String.format("%.1f", sensorEvent.values[2]) + "\n";
+
+               try {
+                  if (lacc_W != null) {
+                     lacc_W.append(string);
+                     lacc_W.flush();
+                  }
+
+               } catch (Exception e) {
+               }
+               olaccX = nlaccX;
+               olaccY = nlaccY;
+               olaccZ = nlaccZ;
+            }
+            break;
+         case Sensor.TYPE_GYROSCOPE:
+            ngyroX = sensorEvent.values[0];
+            ngyroY = sensorEvent.values[1];
+            ngyroZ = sensorEvent.values[2];
+
+            if((Math.abs(ngyroX-ogyroX))>1||(Math.abs(ngyroY-ogyroY))>1||(Math.abs(ngyroZ-ogyroZ))>1) {
 //         gyroStatus.setText("Rotation rate (rad/s)\nX:" + String.format("%.1f", sensorEvent.values[0])+
 //               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
 //               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
 
-        String string = dateFormat.format(rightNow.getTime())+
-                ","+String.format("%.1f", sensorEvent.values[0])+
-                "," + String.format("%.1f", sensorEvent.values[1])+
-                "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+               String string = dateFormat.format(rightNow.getTime())+
+                       ","+String.format("%.1f", sensorEvent.values[0])+
+                       "," + String.format("%.1f", sensorEvent.values[1])+
+                       "," + String.format("%.1f", sensorEvent.values[2])+"\n";
 
-        try {
-           if(gyro_W!=null) {
-              gyro_W.append(string);
-              gyro_W.flush();
-           }
+               try {
+                  if(gyro_W!=null) {
+                     gyro_W.append(string);
+                     gyro_W.flush();
+                  }
 
-        } catch (Exception e) {
-        }
-     }
-     if(sensorEvent.sensor.getType() == Sensor.TYPE_GRAVITY){
+               } catch (Exception e) {
+               }
+               ogyroX = ngyroX;
+               ogyroY = ngyroY;
+               ogyroZ = ngyroZ;
+            }
+            break;
+         case Sensor.TYPE_GRAVITY:
+            ngravX = sensorEvent.values[0];
+            ngravY = sensorEvent.values[1];
+            ngravZ = sensorEvent.values[2];
+            if((Math.abs(ngravX-ogravX))>1||(Math.abs(ngravY-ogravY))>1||(Math.abs(ngravZ-ogravZ))>1) {
 //         gravStatus.setText("Gravity (m/s^2)\nX:" + String.format("%.1f", sensorEvent.values[0])+
 //               "\nY:" + String.format("%.1f", sensorEvent.values[1])+
 //               "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
 
-        String string = dateFormat.format(rightNow.getTime())+
-                ","+String.format("%.1f", sensorEvent.values[0])+
-                "," + String.format("%.1f", sensorEvent.values[1])+
-                "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+               String string = dateFormat.format(rightNow.getTime())+
+                       ","+String.format("%.1f", sensorEvent.values[0])+
+                       "," + String.format("%.1f", sensorEvent.values[1])+
+                       "," + String.format("%.1f", sensorEvent.values[2])+"\n";
 
-        try {
-           if(grav_W!=null) {
-              grav_W.append(string);
-              grav_W.flush();
-           }
+               try {
+                  if(grav_W!=null) {
+                     grav_W.append(string);
+                     grav_W.flush();
+                  }
 
-        } catch (Exception e) {
-        }
-     }
-     if(sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+               } catch (Exception e) {
+               }
+               ogravX = ngravX;
+               ogravY = ngravY;
+               ogravZ = ngravZ;
+            }
+            break;
+         case Sensor.TYPE_MAGNETIC_FIELD:
+            nmagnX = sensorEvent.values[0];
+            nmagnY = sensorEvent.values[1];
+            nmagnZ = sensorEvent.values[2];
 
-        String string = dateFormat.format(rightNow.getTime())+
-                ","+String.format("%.1f", sensorEvent.values[0])+
-                "," + String.format("%.1f", sensorEvent.values[1])+
-                "," + String.format("%.1f", sensorEvent.values[2])+"\n";
+            if((Math.abs(nmagnX-omagnX))>10||(Math.abs(nmagnY-omagnY))>10||(Math.abs(nmagnZ-omagnZ))>10) {
 
-        try {
-           if(magn_W!=null) {
-              magn_W.append(string);
-              magn_W.flush();
-           }
-        } catch (Exception e) {
-        }
-     }
-     if(sensorEvent.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY){
-//        baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
-     }
+//           gravStatus.setText("Magnetic field (uT)\nX:" + String.format("%.1f", sensorEvent.values[0]) +
+//                   "\nY:" + String.format("%.1f", sensorEvent.values[1]) +
+//                   "\nZ:" + String.format("%.1f", sensorEvent.values[2]));
+
+               String string = dateFormat.format(rightNow.getTime()) +
+                       "," + String.format("%.1f", sensorEvent.values[0]) +
+                       "," + String.format("%.1f", sensorEvent.values[1]) +
+                       "," + String.format("%.1f", sensorEvent.values[2]) + "\n";
+
+               try {
+                  if (magn_W != null) {
+                     magn_W.append(string);
+                     magn_W.flush();
+                  }
+               } catch (Exception e) {
+               }
+               omagnX = nmagnX;
+               omagnY = nmagnY;
+               omagnZ = nmagnZ;
+            }
+            break;
+         case Sensor.TYPE_RELATIVE_HUMIDITY:
+//            baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
+            break;
+         default:
+      }
 
    }
 

@@ -23,7 +23,9 @@ public class WifiReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
-		String xml = "<?xml version=\"1.0\"?><deviceid>"+find.deviceID+"</deviceid><data>";
+//		String xml = "<?xml version=\"1.0\"?><data>";
+		String xml = "<?xml version=\"1.0\"?><data>"+"<deviceid>"+find.deviceID+"</deviceid>";
+
 		if(currentLocation != null){
 			xml = xml + "<currentlocation>";
 			xml = xml + "<lat>" + currentLocation.getLatitude() + "</lat>";
@@ -33,7 +35,6 @@ public class WifiReceiver extends BroadcastReceiver {
 		}
 
 		List<ScanResult> results = find.wifi.getScanResults();
-		
 		System.out.println("Number of signals detected:" + results.size() + "\n");
 		
 		//Store unique MAC address alongwith the maximum signal strength received for that MAC address 
@@ -109,11 +110,7 @@ public class WifiReceiver extends BroadcastReceiver {
 		}
 //		(new SendWifiInfoTask(find)).execute(xml);
 		Log.v(TAG, xml);
-		if(LocateMeActivity.count > 0){
-			find.wifi.startScan(); 
-			LocateMeActivity.count--;
-			Log.v(TAG, "COUNT: " + LocateMeActivity.count);
-		}
+
 		System.out.println(xml);
 		//(new LogWifiInfoTask()).execute(xml);
 	}

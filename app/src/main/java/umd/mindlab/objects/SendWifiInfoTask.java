@@ -46,7 +46,7 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 
 		Log.v(TAG, post.getMethod());
 		Log.v(TAG, post.getURI().toASCIIString());
-//
+
 //		MultipartEntity entity = new MultipartEntity();
 //		try {
 //			entity.addPart("data", new InputStreamBody(
@@ -129,7 +129,7 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 			Log.v(TAG, displayString);
 		}
 		Log.v("here","hereee");
-		file.delete();
+//		file.delete();
 		return displayString;
 
 	}

@@ -16,20 +16,14 @@
                 android:layout_gravity="right"
                 android:layout_width="60dp"
                 android:layout_height="60dp" />
+
             <TextView
-                android:id="@+id/textStatus"
+                android:id="@+id/accCoord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
+                android:gravity="left"
                 android:textAppearance="?android:attr/textAppearanceLarge" >
             </TextView>
-            <!--<TextView-->
-                <!--android:id="@+id/accCoord"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:gravity="left"-->
-                <!--android:textAppearance="?android:attr/textAppearanceLarge" >-->
-            <!--</TextView>-->
             <!--<TextView-->
                 <!--android:id="@+id/gyroCoord"-->
                 <!--android:layout_width="match_parent"-->
@@ -72,15 +66,13 @@
                 <!--android:gravity="center_horizontal"-->
                 <!--android:textAppearance="?android:attr/textAppearanceLarge" >-->
             <!--</TextView>-->
-                <!--<Button-->
-                    <!--android:id="@+id/update"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center_horizontal"-->
-                    <!--android:layout_weight="0"-->
-                    <!--android:text="Locate" >-->
-                <!--</Button>-->
-
+                <TextView
+                    android:id="@+id/textStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:textAppearance="?android:attr/textAppearanceLarge" >
+                </TextView>
                 <Button
                     android:id="@+id/start"
                     android:layout_gravity="center_horizontal"

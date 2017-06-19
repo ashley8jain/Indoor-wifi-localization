@@ -32,12 +32,12 @@
         "source": "/Users/ashleyjain/.android/build-cache/5e7f1a3f413d3314a208e3702c1c4a64f526a3b3/output/res/drawable-xhdpi/ic_suggestion.png"
     },
     {
-        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/ic_launcher.png",
-        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/ic_launcher.png"
-    },
-    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/button_on.png",
         "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/button_on.png"
+    },
+    {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/ic_launcher.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable-xhdpi/ic_launcher.png"
     },
     {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable-xhdpi/ic_action_action_search.png",

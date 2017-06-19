@@ -2,6 +2,7 @@ package umd.mindlab.main;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -78,12 +79,9 @@ public class map extends AppCompatActivity {
 
         context = this;
         mMapView = (MapView) findViewById(R.id.mapView);
-//        location = (EditText) findViewById(R.id.location);
-        search = (ImageButton) findViewById(R.id.search);
+//        search = (ImageButton) findViewById(R.id.search);
         gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
         wifibutton = (ImageButton) findViewById(R.id.wifiB);
-//        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 38.99029, -76.9361, 16);
-//        mMapView.setMap(map);
 
         // Set the DefaultAuthenticationChallegeHandler to allow authentication with the portal.
         DefaultAuthenticationChallengeHandler handler = new DefaultAuthenticationChallengeHandler(this);
@@ -164,13 +162,6 @@ public class map extends AppCompatActivity {
         // add map image layer as operational layer
         map.getOperationalLayers().add(mapImageLayer);
 
-
-//        ServiceFeatureTable serviceFeatureTable = new ServiceFeatureTable("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer/25");
-//        FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTable);
-//        map.getOperationalLayers().add(featureLayer);
-//        ServiceFeatureTable serviceFeatureTable2 = new ServiceFeatureTable("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer/6");
-//        FeatureLayer featureLayer2 = new FeatureLayer(serviceFeatureTable2);
-//        map.getOperationalLayers().add(featureLayer2);
 
         // set the map to be displayed in a MapView
         mMapView.setMap(map);
@@ -371,7 +362,6 @@ public class map extends AppCompatActivity {
                                     }
                                 }
                             }
-
                         },
                         new Response.ErrorListener() {
 
@@ -390,126 +380,37 @@ public class map extends AppCompatActivity {
 
                     @Override
                     public byte[] getBody() throws AuthFailureError {
-//                        String postData = FooBar.getPostData(); // TODO get your final output
-                        String postData = "<?xml version=\"1.0\"?>\n" +
-                                "<data>\n" +
-                                "<accesspoints>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd</name>\n" +
-                                "<mac>00:81:c4:1e:09:7f</mac>\n" +
-                                "<signal>-58</signal>\n" +
-                                "<freq>5765</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-util2</name>\n" +
-                                "<mac>00:f6:63:6f:e4:dc</mac>\n" +
-                                "<signal>-50</signal>\n" +
-                                "<freq>5805</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>eduroam</name>\n" +
-                                "<mac>00:f6:63:6f:e4:de</mac>\n" +
-                                "<signal>-50</signal>\n" +
-                                "<freq>5805</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-secure</name>\n" +
-                                "<mac>00:f6:63:6f:e4:dd</mac>\n" +
-                                "<signal>-50</signal>\n" +
-                                "<freq>5805</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-secure</name>\n" +
-                                "<mac>00:81:c4:1e:09:7d</mac>\n" +
-                                "<signal>-58</signal>\n" +
-                                "<freq>5765</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-util2</name>\n" +
-                                "<mac>00:81:c4:1e:09:7c</mac>\n" +
-                                "<signal>-58</signal>\n" +
-                                "<freq>5765</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>eduroam</name>\n" +
-                                "<mac>00:81:c4:1e:09:7e</mac>\n" +
-                                "<signal>-58</signal>\n" +
-                                "<freq>5765</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-secure</name>\n" +
-                                "<mac>00:f6:63:70:c9:dd</mac>\n" +
-                                "<signal>-77</signal>\n" +
-                                "<freq>5180</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>eduroam</name>\n" +
-                                "<mac>00:f6:63:70:c9:de</mac>\n" +
-                                "<signal>-77</signal>\n" +
-                                "<freq>5180</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-util2</name>\n" +
-                                "<mac>00:f6:63:70:c9:dc</mac>\n" +
-                                "<signal>-76</signal>\n" +
-                                "<freq>5180</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-secure</name>\n" +
-                                "<mac>00:f6:63:72:b2:ed</mac>\n" +
-                                "<signal>-80</signal>\n" +
-                                "<freq>5240</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-util2</name>\n" +
-                                "<mac>00:f6:63:72:b2:ec</mac>\n" +
-                                "<signal>-80</signal>\n" +
-                                "<freq>5240</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>eduroam</name>\n" +
-                                "<mac>00:f6:63:72:b2:ee</mac>\n" +
-                                "<signal>-80</signal>\n" +
-                                "<freq>5240</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd</name>\n" +
-                                "<mac>00:f6:63:6f:e4:df</mac>\n" +
-                                "<signal>-50</signal>\n" +
-                                "<freq>5805</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd</name>\n" +
-                                "<mac>00:f6:63:70:c9:df</mac>\n" +
-                                "<signal>-77</signal>\n" +
-                                "<freq>5180</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd</name>\n" +
-                                "<mac>00:f6:63:6f:dc:ef</mac>\n" +
-                                "<signal>-78</signal>\n" +
-                                "<freq>5220</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd</name>\n" +
-                                "<mac>00:f6:63:72:b2:ef</mac>\n" +
-                                "<signal>-80</signal>\n" +
-                                "<freq>5240</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>umd-secure</name>\n" +
-                                "<mac>00:f6:63:70:c9:d2</mac>\n" +
-                                "<signal>-54</signal>\n" +
-                                "<freq>2437</freq>\n" +
-                                "</accesspoint>\n" +
-                                "<accesspoint>\n" +
-                                "<name>eduroam</name>\n" +
-                                "<mac>00:f6:63:70:c9:d1</mac>\n" +
-                                "<signal>-54</signal>\n" +
-                                "<freq>2437</freq>\n" +
-                                "</accesspoint>\n" +
-                                "</accesspoints>\n" +
-                                "</data>";
+
+                        String xml = "<?xml version=\"1.0\"?><data>"+"<deviceid>"+LocateMeActivity.deviceID+"</deviceid>";
+                        List<ScanResult> results = LocateMeActivity.wifi.getScanResults();
+                        Log.v("Number of signals",""+results.size());
+
+                        for (ScanResult result : results) {
+                            String mac = result.BSSID;
+                            String name = result.SSID;
+                            int signalStrength = result.level;
+                            int freq = result.frequency;
+                            // textStatus.append("\n\n" + result.toString());
+                            System.out.println(mac + "," + name+","+signalStrength + "," + freq);
+                        }
+
+                        xml = xml + "<accesspoints>";
+
+                        for (ScanResult result : results) {
+                            String mac = result.BSSID.trim();
+                            String name = result.SSID.trim();
+                            int signalStrength = result.level;
+                            int freq = result.frequency;
+                            xml = xml + "<accesspoint>";
+                            xml = xml + "<name>" + name + "</name>";
+                            xml = xml + "<mac>" + mac + "</mac>";
+                            xml = xml + "<signal>" + signalStrength + "</signal>";
+                            xml = xml + "<freq>" + freq + "</freq>";
+                            xml = xml + "</accesspoint>";
+                        }
+                        xml = xml + "</accesspoints></data>";
+
+                        String postData = xml;
                         try {
                             return postData == null ? null :
                                     postData.getBytes(getParamsEncoding());

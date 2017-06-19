@@ -40,6 +40,10 @@
         "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/button_inactive.xml"
     },
     {
+        "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/map_icon.png",
+        "source": "/Users/ashleyjain/Downloads/LocateMe/app/src/main/res/drawable/map_icon.png"
+    },
+    {
         "merged": "/Users/ashleyjain/Downloads/LocateMe/app/build/intermediates/res/merged/debug/drawable/abc_spinner_textfield_background_material.xml",
         "source": "/Users/ashleyjain/.android/build-cache/cb147431a28a00a757c25cf9db4006e5f6f0e622/output/res/drawable/abc_spinner_textfield_background_material.xml"
     },
