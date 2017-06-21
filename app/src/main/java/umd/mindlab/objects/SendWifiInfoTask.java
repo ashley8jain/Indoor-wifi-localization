@@ -87,7 +87,7 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 
 		Log.v(TAG,"device: "+fma.deviceID);
 
-		File file = new File(Environment.getExternalStorageDirectory().getPath(),
+		File file = new File(Environment.getExternalStorageDirectory().getPath()+"/datas",
 				fma.deviceID+".zip");
 
 		Log.v(TAG,file.exists()+" hereeeeee");
@@ -114,24 +114,22 @@ public class SendWifiInfoTask extends AsyncTask<String, Long, String> {
 				builder.append("\n");
 				Log.v(TAG, line + "\n");
 			}
-
 			String serverResponse = builder.toString();
 			Log.v(TAG, "server response: " + serverResponse);
 			displayString = serverResponse;
-		} catch (FileNotFoundException e) {
+		}catch (FileNotFoundException e){
 			e.printStackTrace();
-		} catch (IOException e) {
+		}catch (IOException e){
 			e.printStackTrace();
 		}
-		finally {
+		finally{
 			client.close();
 			Log.v(TAG, "right before the return");
 			Log.v(TAG, displayString);
 		}
 		Log.v("here","hereee");
-//		file.delete();
+		file.delete();
 		return displayString;
-
 	}
 	
 	protected void onPostExecute(String result) {

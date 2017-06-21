@@ -56,6 +56,9 @@ import com.esri.arcgisruntime.tasks.geocode.LocatorInfo;
 import com.esri.arcgisruntime.tasks.geocode.LocatorTask;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -80,7 +83,7 @@ public class map extends AppCompatActivity {
         context = this;
         mMapView = (MapView) findViewById(R.id.mapView);
 //        search = (ImageButton) findViewById(R.id.search);
-        gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
+//        gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
         wifibutton = (ImageButton) findViewById(R.id.wifiB);
 
         // Set the DefaultAuthenticationChallegeHandler to allow authentication with the portal.
@@ -313,15 +316,15 @@ public class map extends AppCompatActivity {
         final LocationDisplay mLocationDisplay = mMapView.getLocationDisplay();
 
         //gps button listener
-        gpsbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLocationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.RECENTER);
-                if (!mLocationDisplay.isStarted())
-                    mLocationDisplay.startAsync();
-                Log.v("gps",mLocationDisplay.getMapLocation().getX()+","+mLocationDisplay.getMapLocation().getY());
-            }
-        });
+//        gpsbutton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mLocationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.RECENTER);
+//                if (!mLocationDisplay.isStarted())
+//                    mLocationDisplay.startAsync();
+//                Log.v("gps",mLocationDisplay.getMapLocation().getX()+","+mLocationDisplay.getMapLocation().getY());
+//            }
+//        });
 
         //wifi button listener
         wifibutton.setOnClickListener(new View.OnClickListener() {
@@ -338,13 +341,42 @@ public class map extends AppCompatActivity {
 
                             @Override
                             public void onResponse(String response) {
-                                // TODO handle the response
                                 Log.v("Response",response);
+
+                                ///////////// json object(containing lat,long,address string)) --> uncomment below lines for json object format
+
+                             /*   try {
+                                    JSONObject jsonResponse = new JSONObject(response);
+                                    JSONObject lat = jsonResponse.getJSONObject("lat").getDouble();
+                                    JSONObject long = jsonResponse.getJSONObject("long").getDouble();
+                                    JSONObject address = jsonResponse.getJSONObject("address").getString();
+                                    TextView calloutContent = new TextView(getApplicationContext());
+                                    calloutContent.setTextColor(Color.BLACK);
+                                    calloutContent.setSingleLine();
+                                    calloutContent.setText(address);
+                                    Viewpoint vp = new Viewpoint(lat,long,700);
+
+                                    mMapView.setViewpointAsync(vp, 1);
+                                    Point mapPoint = new Point(long,lat, SpatialReferences.getWgs84());
+                                    mCallout = mMapView.getCallout();
+                                    mCallout.setLocation(mapPoint);
+                                    mCallout.setContent(calloutContent);
+                                    mCallout.show();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }    */
+
+
+                             ///////////// comment 13 lines below if response is in json format
+
+                                // /*
                                 TextView calloutContent = new TextView(getApplicationContext());
                                 calloutContent.setTextColor(Color.BLACK);
                                 calloutContent.setSingleLine();
                                 calloutContent.setText(response);
                                 Viewpoint vp = new Viewpoint(38.990361,-76.936349,700);
+
                                 // Zoom map to geocode result location
                                 mMapView.setViewpointAsync(vp, 1);
                                 Point mapPoint = new Point(-76.936349,38.990361, SpatialReferences.getWgs84());
@@ -352,6 +384,10 @@ public class map extends AppCompatActivity {
                                 mCallout.setLocation(mapPoint);
                                 mCallout.setContent(calloutContent);
                                 mCallout.show();
+                                // */
+
+
+
 
                                 //deselect all other floor and displaying floor no. 4 only
                                 for(int i=0;i<mapImageLayer.getSublayers().size();i++){
@@ -429,66 +465,59 @@ public class map extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.menu_search,menu);
-        MenuItem item = menu.findItem(R.id.menuSearch);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.v("query",query);
-//                Viewpoint viewpoint = new Viewpoint(mGeocodedLocation[0].getDisplayLocation(),7000);
-//                mMapView.setViewpoint(viewpoint);
-                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(),mGeocodedLocation[0].getLabel());
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String newText) {
-                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(newText,mGeocodeParameters);
-                geocodeFuture.addDoneListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // Get the results of the async operation
-                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
-
-                            if (geocodeResults.size() > 0){
-                                // Use the first result - for example
-                                // display on the map
-                                mGeocodedLocation[0] = geocodeResults.get(0);
-//                                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(), mGeocodedLocation[0].getLabel());
-
-                                for(int i=0;i<geocodeResults.size();i++){
-                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
-                                }
-
-//                                Point point = new Point(mGeocodedLocation[0].getDisplayLocation().getX(),mGeocodedLocation[0].getDisplayLocation().getY(), SpatialReference.create(2229));
-//                                Viewpoint viewpoint = new Viewpoint(point,7000);
-//                                mMapView.setViewpoint(viewpoint);
-
-                            } else {
-                                if(!newText.isEmpty())
-                                    Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (InterruptedException | ExecutionException e) {
-                            // Deal with exception...
-                            e.printStackTrace();
-                        }
-                        // Done processing and can remove this listener.
-                        geocodeFuture.removeDoneListener(this);
-                    }
-                });
-                return false;
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//
+//        getMenuInflater().inflate(R.menu.menu_search,menu);
+//        MenuItem item = menu.findItem(R.id.menuSearch);
+//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+//
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Log.v("query",query);
+//                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(),mGeocodedLocation[0].getLabel());
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(final String newText) {
+//                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(newText,mGeocodeParameters);
+//                geocodeFuture.addDoneListener(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            // Get the results of the async operation
+//                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
+//
+//                            if (geocodeResults.size() > 0){
+//                                // Use the first result - for example
+//                                // display on the map
+//                                mGeocodedLocation[0] = geocodeResults.get(0);
+//
+//                                for(int i=0;i<geocodeResults.size();i++){
+//                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
+//                                }
+//
+//                            } else {
+//                                if(!newText.isEmpty())
+//                                    Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                        } catch (InterruptedException | ExecutionException e) {
+//                            // Deal with exception...
+//                            e.printStackTrace();
+//                        }
+//                        // Done processing and can remove this listener.
+//                        geocodeFuture.removeDoneListener(this);
+//                    }
+//                });
+//                return false;
+//            }
+//        });
+//
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     void displaySearchResult(Point resultPoint, String address) {
 

@@ -63,8 +63,13 @@ import java.util.zip.ZipOutputStream;
 
 public class LocateMeActivity extends AppCompatActivity implements SensorEventListener{
 
+   final long maxSizeFile = 4*1024*1024;
+   long wifiInterval = 20*1000;
+   long gpsInterval = 300*1000;
+   int pedo_steps = 3;
+
    private static final String TAG = "LocateMeActivity";
-   private static final int BUFFER_SIZE = 2048*100;
+   private static final int BUFFER_SIZE = 10*1024*1024;
    public static WifiManager wifi;
    BroadcastReceiver receiver;
    public TelephonyManager telephonyManager;
@@ -91,10 +96,9 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    LocationListener loclist;
 
    public static int count = 0;
+   private Timer myTimer,fileSizeTimer;
 
-   private Timer myTimer;
-
-   String path=Environment.getExternalStorageDirectory().getPath()+"/datas";
+   String path=Environment.getExternalStorageDirectory().getPath()+"/datas/csv";
    File accelero_file,lacc_file,gyro_file,grav_file,magn_file,baro_file;
    File gps_file,xml_file;
    FileWriter accelero_W,lacc_W,gyro_W,grav_W,magn_W,baro_W;
@@ -167,7 +171,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
             // Called when a new location is found by the network location provider.
             Log.v("gps","gpssss");
             Calendar rightNow = Calendar.getInstance();
-            String str="";
+//            String str="";
             strr="";
 
             Geocoder geocoder;
@@ -175,29 +179,29 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
             geocoder = new Geocoder(context, Locale.getDefault());
             strr+=dateFormat.format(rightNow.getTime());
 
-            str+="Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude();
+//            str+="Lat: "+location.getLatitude()+"\n Long: "+location.getLongitude();
             strr+=","+location.getLatitude()+","+location.getLongitude();
-            str+="\n Altitude: "+location.getAltitude();
+//            str+="\n Altitude: "+location.getAltitude();
             strr+=","+location.getAltitude()+",";
             try{
                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
 
                if(address!=null){
-                  str+="\n Address: "+address;
+//                  str+="\n Address: "+address;
                   strr+=address+" ";
                }
 
                String city = addresses.get(0).getLocality();
-               str+="\n City: "+city;
+//               str+="\n City: "+city;
                String state = addresses.get(0).getAdminArea();
-               str+="\n State: "+state;
+//               str+="\n State: "+state;
                String country = addresses.get(0).getCountryName();
-               str+="\n Country: "+country;
+//               str+="\n Country: "+country;
                String postalCode = addresses.get(0).getPostalCode();
-               str+="\n Postal code: "+postalCode;
+//               str+="\n Postal code: "+postalCode;
 
-               strr+=city+" "+state+" "+country+" "+postalCode;
+               strr+=city+" "+state+" "+country+" "+postalCode+"\n";
 
             } catch (IOException e) {
                e.printStackTrace();
@@ -221,7 +225,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          public void onProviderDisabled(String provider) {}
       };
 
-      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,300000,0,loclist);
+      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,gpsInterval,0,loclist);
 
       mapp = (ImageButton) findViewById(R.id.other);
 
@@ -261,6 +265,8 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                StartTime = SystemClock.uptimeMillis();
                handler.postDelayed(runnable, 0);
 
+               final File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/datas");
+
                try {
                   accelero_W = new FileWriter(accelero_file);
                   lacc_W = new FileWriter(lacc_file);
@@ -278,13 +284,14 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                         Log.v(TAG,"wifiscan");
                         setUp();
                      }
-                  }, 0, 30000);
+                  }, 0, wifiInterval);
 
                   accelero_W.append("date_time,X,Y,Z\n");
                   lacc_W.append("date_time,X,Y,Z\n");
                   gyro_W.append("date_time,X,Y,Z\n");
                   magn_W.append("date_time,X,Y,Z\n");
                   grav_W.append("date_time,X,Y,Z\n");
+                  baro_W.append("date_time,air humidity(%)\n");
                   gps_W.append("Time,Lat,Long,Altitude,Address\n");
                   xml_W.append("Time,XML_data\n");
 
@@ -295,9 +302,81 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                   grav_W.flush();
                   gps_W.flush();
                   xml_W.flush();
+
                } catch (IOException e) {
                   e.printStackTrace();
                }
+
+               fileSizeTimer = new Timer();
+               fileSizeTimer.schedule(new TimerTask() {
+                  @Override
+                  public void run(){
+
+                     Log.v("file size: ",""+dirSize(dir));
+
+                     if(dirSize(dir)>maxSizeFile){
+                        try{
+                           accelero_W.close();
+                           lacc_W.close();
+                           magn_W.close();
+                           gyro_W.close();
+                           grav_W.close();
+                           baro_W.close();
+                           gps_W.close();
+                           xml_W.close();
+
+                           FileOutputStream fileOutputStream;
+                           ZipOutputStream zipOutputStream =  null;
+                           Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
+
+                           String destination = Environment.getExternalStorageDirectory().getPath()+ "/datas/"+deviceID+".zip";
+
+                           File file = new File(destination);
+                           if(!file.exists())
+                              file.createNewFile();
+
+                           fileOutputStream = new FileOutputStream(file);
+                           zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
+                           zipFile(zipOutputStream, path+"/");
+
+                     }catch(IOException e){
+                        e.printStackTrace();
+                     }
+
+                     //send file
+                     (new SendWifiInfoTask(LocateMeActivity.this)).execute(xml);
+
+                        try {
+                           accelero_W = new FileWriter(accelero_file);
+                           lacc_W = new FileWriter(lacc_file);
+                           gyro_W = new FileWriter(gyro_file);
+                           magn_W = new FileWriter(magn_file);
+                           grav_W = new FileWriter(grav_file);
+                           baro_W = new FileWriter(baro_file);
+                           gps_W = new FileWriter(gps_file);
+                           xml_W = new FileWriter(xml_file);
+                           accelero_W.append("date_time,X,Y,Z\n");
+                           lacc_W.append("date_time,X,Y,Z\n");
+                           gyro_W.append("date_time,X,Y,Z\n");
+                           magn_W.append("date_time,X,Y,Z\n");
+                           grav_W.append("date_time,X,Y,Z\n");
+                           baro_W.append("date_time,air humidity(%)\n");
+                           gps_W.append("Time,Lat,Long,Altitude,Address\n");
+                           xml_W.append("Time,XML_data\n");
+                           accelero_W.flush();
+                           lacc_W.flush();
+                           gyro_W.flush();
+                           magn_W.flush();
+                           grav_W.flush();
+                           gps_W.flush();
+                           xml_W.flush();
+
+                        } catch (IOException e) {
+                           e.printStackTrace();
+                        }
+                     }
+                  }
+               }, 0, 1200000);
             }
             else{
                start_B[0]=false;
@@ -306,7 +385,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                TimeBuff += MillisecondTime;
                handler.removeCallbacks(runnable);
 
-               myTimer.cancel();
+               myTimer.cancel();fileSizeTimer.cancel();
 
                MillisecondTime = 0L ;
                StartTime = 0L ;
@@ -331,17 +410,17 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                   ZipOutputStream zipOutputStream =  null;
                   Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
 
-                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
+                  String destination = Environment.getExternalStorageDirectory().getPath()+ "/datas/"+deviceID+".zip";
 
                   File file = new File(destination);
-                  if (!file.exists())
+                  if(!file.exists())
                      file.createNewFile();
 
                   fileOutputStream = new FileOutputStream(file);
                   zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
                   zipFile(zipOutputStream, path+"/");
 
-               } catch (IOException e) {
+               }catch(IOException e){
                   e.printStackTrace();
                }
 
@@ -381,7 +460,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          registerReceiver(receiver, new IntentFilter(
                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
       }
-      laccStatus = (TextView) findViewById(R.id.accCoord);
+//      laccStatus = (TextView) findViewById(R.id.accCoord);
 //      gyroStatus = (TextView) findViewById(R.id.gyroCoord);
 //      gravStatus = (TextView) findViewById(R.id.gravStatus);
 //      magStatus = (TextView) findViewById(R.id.magStatus);
@@ -569,15 +648,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    float omagnX=0,nmagnX=0,omagnY=0,nmagnY=0,omagnZ=0,nmagnZ=0;
 
    @Override
-   public void onSensorChanged(SensorEvent sensorEvent) {
+   public void onSensorChanged(SensorEvent sensorEvent){
 
      Calendar rightNow = Calendar.getInstance();
 
       switch(sensorEvent.sensor.getType()){
          case Sensor.TYPE_STEP_COUNTER:
-            laccStatus.setText("Step_counter:"+sensorEvent.values[0]);
+//            laccStatus.setText("Step_counter:"+sensorEvent.values[0]);
             new_steps = sensorEvent.values[0];
-            if(Math.abs(new_steps-old_steps)>=3&&start_wifiscan){
+            if(Math.abs(new_steps-old_steps)>=pedo_steps&&start_wifiscan){
                old_steps = new_steps;
                Log.v(TAG,"wifiscan");
                setUp();
@@ -713,11 +792,11 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                        "," + String.format("%.1f", sensorEvent.values[2]) + "\n";
 
                try {
-                  if (magn_W != null) {
-                     magn_W.append(string);
-                     magn_W.flush();
-                  }
-               } catch (Exception e) {
+                     if (magn_W != null) {
+                        magn_W.append(string);
+                        magn_W.flush();
+                     }
+                  } catch (Exception e){
                }
                omagnX = nmagnX;
                omagnY = nmagnY;
@@ -726,6 +805,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
             break;
          case Sensor.TYPE_RELATIVE_HUMIDITY:
 //            baroStatus.setText("Air humidity (%)\n" + String.format("%.1f", sensorEvent.values[0]));
+            String string = dateFormat.format(rightNow.getTime()) +","+ String.format("%.2f", sensorEvent.values[0]);
+            try {
+               if(baro_W != null){
+                  baro_W.append(string);
+                  baro_W.flush();
+               }
+            }
+            catch(Exception e){
+            }
             break;
          default:
       }
@@ -744,7 +832,7 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
          ZipOutputStream zipOutputStream =  null;
          //Log.v(TAG,Environment.getExternalStorageDirectory().getPath());
 
-         String destination = Environment.getExternalStorageDirectory().getPath()+ "/"+deviceID+".zip";
+         String destination = Environment.getExternalStorageDirectory().getPath()+ "datas/"+deviceID+".zip";
 
          File file2 = new File(destination);
          if (!file2.exists())
@@ -870,6 +958,24 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    };
 
+   long dirSize(File dir) {
+
+      if (dir.exists()) {
+         long result = 0;
+         File[] fileList = dir.listFiles();
+         for(int i = 0; i < fileList.length; i++) {
+            // Recursive call if it's a directory
+            if(fileList[i].isDirectory()) {
+               result += dirSize(fileList [i]);
+            } else {
+               // Sum the file size in bytes
+               result += fileList[i].length();
+            }
+         }
+         return result; // return the file size
+      }
+      return 0;
+   }
 
 
 }
