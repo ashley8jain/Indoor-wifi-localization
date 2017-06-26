@@ -326,6 +326,12 @@ public class map extends AppCompatActivity {
 //            }
 //        });
 
+
+
+
+
+
+
         //wifi button listener
         wifibutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -342,6 +348,37 @@ public class map extends AppCompatActivity {
                             @Override
                             public void onResponse(String response) {
                                 Log.v("Response",response);
+
+                                /*
+                                floor   layer no.
+                                9       0
+                                8       1
+                                7       2
+                                6       3
+                                5       4
+                                4       5
+                                3       6
+                                M2      7
+                                2       8
+                                M1      9
+                                1       10
+                                M0      11
+                                0       12
+                                MB0     13
+                                B0      14
+                                MSB0    15
+                                SB0     16
+                                SS0     17
+
+                                 */
+
+
+
+
+
+
+
+
 
                                 ///////////// json object(containing lat,long,address string)) --> uncomment below lines for json object format
 
@@ -363,12 +400,67 @@ public class map extends AppCompatActivity {
                                     mCallout.setContent(calloutContent);
                                     mCallout.show();
 
+                                    //deselect all other floor and displaying floor no. 4 only
+                                    char firstD = address.charAt(0);
+                                    int floor_num = firstD - '0';
+                                    int layer_num;
+                                    switch (floor_num){
+                                        case 0:
+                                            layer_num = 12;
+                                            break;
+                                        case 1:
+                                            layer_num = 10;
+                                            break;
+                                        case 2:
+                                            layer_num = 8;
+                                            break;
+                                        case 3:
+                                            layer_num = 6;
+                                            break;
+                                        case 4:
+                                            layer_num = 5;
+                                            break;
+                                        case 5:
+                                            layer_num = 4;
+                                            break;
+                                        case 6:
+                                            layer_num = 3;
+                                            break;
+                                        case 7:
+                                            layer_num = 2;
+                                            break;
+                                        case 8:
+                                            layer_num = 1;
+                                            break;
+                                        case 9:
+                                            layer_num = 0;
+                                            break;
+                                        case 11: //'B'-'0'=11
+                                            layer_num = 14; //basement
+                                            break;
+                                        default:
+                                            layer_num = -1;
+                                    }
+                                    for(int i=0;i<mapImageLayer.getSublayers().size();i++){
+                                        for(int j=0;j<mapImageLayer.getSublayers().get(i).getSublayers().size();j++){
+                                            if(j!=layer_num){
+                                                mapImageLayer.getSublayers().get(i).getSublayers().get(j).setVisible(false);
+                                            }
+                                            else{
+                                                mapImageLayer.getSublayers().get(i).getSublayers().get(j).setVisible(true);
+                                            }
+                                        }
+                                    }
+
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }    */
+                                }
+
+                                */
 
 
-                             ///////////// comment 13 lines below if response is in json format
+
+                             ///////////// comment code lines below if response is in json format
 
                                 // /*
                                 TextView calloutContent = new TextView(getApplicationContext());
@@ -384,19 +476,20 @@ public class map extends AppCompatActivity {
                                 mCallout.setLocation(mapPoint);
                                 mCallout.setContent(calloutContent);
                                 mCallout.show();
-                                // */
 
-
-
-
-                                //deselect all other floor and displaying floor no. 4 only
                                 for(int i=0;i<mapImageLayer.getSublayers().size();i++){
                                     for(int j=0;j<mapImageLayer.getSublayers().get(i).getSublayers().size();j++){
                                         if(j!=5){
                                             mapImageLayer.getSublayers().get(i).getSublayers().get(j).setVisible(false);
                                         }
+                                        else{
+                                            mapImageLayer.getSublayers().get(i).getSublayers().get(j).setVisible(true);
+                                        }
                                     }
                                 }
+                                // */
+
+
                             }
                         },
                         new Response.ErrorListener() {
@@ -455,7 +548,6 @@ public class map extends AppCompatActivity {
                             return null;
                         }
                     }
-
                 };
 
                 // Schedule the request on the queue

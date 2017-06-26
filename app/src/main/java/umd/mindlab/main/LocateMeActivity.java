@@ -80,14 +80,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    private Sensor laccSensor,gyroSensor,gravSensor,acceleroSensor,magneticSensor,baroSensor,step_counter;
    private SensorEventListener SEL;
    String strr;
-   TextView textStatus,timerText;
+   TextView textStatus;
+   TextView timerText;
    TextView laccStatus,gpsloc,gyroStatus,gravStatus,acceleroStatus,magStatus,baroStatus;
    Button update;
    ImageButton mapp;
    Button start;
    Context context;
    Handler handler;
-   int Hours, Seconds, Minutes, MilliSeconds;
+   int Hours, Seconds, Minutes;
    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
    boolean start_wifiscan=false;
    //Button verify;
@@ -96,7 +97,8 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
    LocationListener loclist;
 
    public static int count = 0;
-   private Timer myTimer,fileSizeTimer;
+   private Timer myTimer;
+   private Timer fileSizeTimer;
 
    String path=Environment.getExternalStorageDirectory().getPath()+"/datas/csv";
    File accelero_file,lacc_file,gyro_file,grav_file,magn_file,baro_file;
@@ -277,15 +279,6 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                   gps_W = new FileWriter(gps_file);
                   xml_W = new FileWriter(xml_file);
 
-                  myTimer = new Timer();
-                  myTimer.schedule(new TimerTask() {
-                     @Override
-                     public void run(){
-                        Log.v(TAG,"wifiscan");
-                        setUp();
-                     }
-                  }, 0, wifiInterval);
-
                   accelero_W.append("date_time,X,Y,Z\n");
                   lacc_W.append("date_time,X,Y,Z\n");
                   gyro_W.append("date_time,X,Y,Z\n");
@@ -302,6 +295,15 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                   grav_W.flush();
                   gps_W.flush();
                   xml_W.flush();
+
+                  myTimer = new Timer();
+                  myTimer.schedule(new TimerTask() {
+                     @Override
+                     public void run(){
+                        Log.v(TAG,"wifiscan");
+                        setUp();
+                     }
+                  }, 0, wifiInterval);
 
                } catch (IOException e) {
                   e.printStackTrace();
@@ -339,9 +341,9 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                            zipOutputStream =  new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
                            zipFile(zipOutputStream, path+"/");
 
-                     }catch(IOException e){
-                        e.printStackTrace();
-                     }
+                        }catch(IOException e){
+                           e.printStackTrace();
+                        }
 
                      //send file
                      (new SendWifiInfoTask(LocateMeActivity.this)).execute(xml);
@@ -393,7 +395,6 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
                UpdateTime = 0L ;
                Seconds = 0 ;
                Minutes = 0 ;
-               MilliSeconds = 0 ;
 
                //sensor datas zip
                try{
@@ -435,30 +436,16 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    }
 
-   private void buildAlertMessageNoGps() {
-      final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setMessage("GPS is disabled, please enable gps")
-            .setCancelable(false)
-            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                  startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-               }
-            });
-      final AlertDialog alert = builder.create();
-      alert.show();
-   }
-
    /** Called when the activity is first created. */
    @Override
-   public void onStart() {
+   public void onStart(){
       super.onStart();
       Log.v("OnStart","OnStart");
 
       if (receiver == null) {
          wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
          receiver = new WifiReceiver(this);
-         registerReceiver(receiver, new IntentFilter(
-               WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+         registerReceiver(receiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
       }
 //      laccStatus = (TextView) findViewById(R.id.accCoord);
 //      gyroStatus = (TextView) findViewById(R.id.gyroCoord);
@@ -613,6 +600,19 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
       System.out.println("In restore");
       onCreate(savedInstanceState);
    }*/
+
+   private void buildAlertMessageNoGps() {
+      final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setMessage("GPS is disabled, please enable gps")
+            .setCancelable(false)
+            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                  startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+               }
+            });
+      final AlertDialog alert = builder.create();
+      alert.show();
+   }
 
    private void setUp() {
       if (!isConnected(getApplicationContext())) {
@@ -932,23 +932,16 @@ public class LocateMeActivity extends AppCompatActivity implements SensorEventLi
 
    }
 
-   public Runnable runnable = new Runnable() {
+   public Runnable runnable = new Runnable(){
 
       public void run() {
 
          MillisecondTime = SystemClock.uptimeMillis() - StartTime;
-
          UpdateTime = TimeBuff + MillisecondTime;
-
          Seconds = (int) (UpdateTime / 1000);
-
          Minutes = Seconds / 60;
-
          Hours = Minutes / 60;
-
          Seconds = Seconds % 60;
-
-         MilliSeconds = (int) (UpdateTime % 1000);
 
          timerText.setText(String.format("%02d", Hours)+":"+ String.format("%02d", (Minutes%60)) + ":"
                  + String.format("%02d", Seconds));
