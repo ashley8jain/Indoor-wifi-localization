@@ -68,12 +68,17 @@ public class map extends AppCompatActivity {
 
     Context context;
     private MapView mMapView;
-    //EditText location;
+    //    EditText location;
     ImageButton search,gpsbutton,wifibutton;
     Callout mCallout;
     LocatorTask locatorTask;
     GeocodeParameters mGeocodeParameters;
     GeocodeResult[] mGeocodedLocation = {null};
+    ArcGISMapImageLayer mapImageLayer;
+
+
+    // The layer on/off menu items.
+    private MenuItem floor9,floor8,floor7,floor6,floor5,floor4,floor3,floorM2,floor2,floorM1,floor1,floorM0,floor0,floorMB0,floorB0,floorMSB0,floorSB0,floorSS0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +88,7 @@ public class map extends AppCompatActivity {
         context = this;
         mMapView = (MapView) findViewById(R.id.mapView);
 //        search = (ImageButton) findViewById(R.id.search);
-//        gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
+        gpsbutton = (ImageButton) findViewById(R.id.gpsbutton);
         wifibutton = (ImageButton) findViewById(R.id.wifiB);
 
         // Set the DefaultAuthenticationChallegeHandler to allow authentication with the portal.
@@ -121,7 +126,7 @@ public class map extends AppCompatActivity {
             }
         });
 //        portalItem.loadAsync();
-        final ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer");
+        mapImageLayer = new ArcGISMapImageLayer("https://gis.fm.umd.edu/arcgis/rest/services/InteriorSpace/GISFloorplansALL/MapServer");
         UserCredential creds2 = new UserCredential("agrawala", "aa1234");
         mapImageLayer.setCredential(creds2);
         mapImageLayer.addDoneLoadingListener(new Runnable() {
@@ -241,74 +246,74 @@ public class map extends AppCompatActivity {
 //                        geocodeFuture.removeDoneListener(this);
 //                    }
 //                });
-
-
-//                Polygon polygon = mMapView.getVisibleArea();
-//                Toast.makeText(context,polygon.toJson(),Toast.LENGTH_LONG).show();
-
-//                Geometry gm =(Geometry) Geometry.fromJson("{\n" +
-//                        "    \"rings\": [\n" +
-//                        "     [\n" +
-//                        "      [\n" +
-//                        "       -8564514.0826235712,\n" +
-//                        "       4720294.659030511\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564510.6907497682,\n" +
-//                        "       4720294.6806521676\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564510.646406075,\n" +
-//                        "       4720287.6727929674\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564510.9072501417,\n" +
-//                        "       4720287.6710404372\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564510.9014624748,\n" +
-//                        "       4720286.7542403964\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564510.6406185217,\n" +
-//                        "       4720286.7558639077\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564510.6238300242,\n" +
-//                        "       4720284.1033886811\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564519.6905330699,\n" +
-//                        "       4720284.0454856968\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564519.6921502259,\n" +
-//                        "       4720284.3073915951\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564520.2792417575,\n" +
-//                        "       4720284.303673787\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564520.3642395549,\n" +
-//                        "       4720297.7300386578\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564514.1023068782,\n" +
-//                        "       4720297.7700379519\n" +
-//                        "      ],\n" +
-//                        "      [\n" +
-//                        "       -8564514.0826235712,\n" +
-//                        "       4720294.659030511\n" +
-//                        "      ]\n" +
-//                        "     ]\n" +
-//                        "    ],\n" +
-//                        "    \"spatialReference\": {\n" +
-//                        "     \"wkid\": 102100,\n" +
-//                        "     \"latestWkid\": 3857\n" +
-//                        "    }\n" +
-//                        "   }");
-//                mMapView.setViewpointGeometryAsync(gm);
+//
+//
+////                Polygon polygon = mMapView.getVisibleArea();
+////                Toast.makeText(context,polygon.toJson(),Toast.LENGTH_LONG).show();
+//
+////                Geometry gm =(Geometry) Geometry.fromJson("{\n" +
+////                        "    \"rings\": [\n" +
+////                        "     [\n" +
+////                        "      [\n" +
+////                        "       -8564514.0826235712,\n" +
+////                        "       4720294.659030511\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564510.6907497682,\n" +
+////                        "       4720294.6806521676\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564510.646406075,\n" +
+////                        "       4720287.6727929674\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564510.9072501417,\n" +
+////                        "       4720287.6710404372\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564510.9014624748,\n" +
+////                        "       4720286.7542403964\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564510.6406185217,\n" +
+////                        "       4720286.7558639077\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564510.6238300242,\n" +
+////                        "       4720284.1033886811\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564519.6905330699,\n" +
+////                        "       4720284.0454856968\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564519.6921502259,\n" +
+////                        "       4720284.3073915951\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564520.2792417575,\n" +
+////                        "       4720284.303673787\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564520.3642395549,\n" +
+////                        "       4720297.7300386578\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564514.1023068782,\n" +
+////                        "       4720297.7700379519\n" +
+////                        "      ],\n" +
+////                        "      [\n" +
+////                        "       -8564514.0826235712,\n" +
+////                        "       4720294.659030511\n" +
+////                        "      ]\n" +
+////                        "     ]\n" +
+////                        "    ],\n" +
+////                        "    \"spatialReference\": {\n" +
+////                        "     \"wkid\": 102100,\n" +
+////                        "     \"latestWkid\": 3857\n" +
+////                        "    }\n" +
+////                        "   }");
+////                mMapView.setViewpointGeometryAsync(gm);
 //            }
 //        });
 
@@ -316,17 +321,15 @@ public class map extends AppCompatActivity {
         final LocationDisplay mLocationDisplay = mMapView.getLocationDisplay();
 
         //gps button listener
-//        gpsbutton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mLocationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.RECENTER);
-//                if (!mLocationDisplay.isStarted())
-//                    mLocationDisplay.startAsync();
-//                Log.v("gps",mLocationDisplay.getMapLocation().getX()+","+mLocationDisplay.getMapLocation().getY());
-//            }
-//        });
-
-
+        gpsbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLocationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.RECENTER);
+                if (!mLocationDisplay.isStarted())
+                    mLocationDisplay.startAsync();
+                Log.v("gps",mLocationDisplay.getMapLocation().getX()+","+mLocationDisplay.getMapLocation().getY());
+            }
+        });
 
 
 
@@ -460,7 +463,7 @@ public class map extends AppCompatActivity {
 
 
 
-                             ///////////// comment code lines below if response is in json format
+                                ///////////// comment code lines below if response is in json format
 
                                 // /*
                                 TextView calloutContent = new TextView(getApplicationContext());
@@ -557,59 +560,326 @@ public class map extends AppCompatActivity {
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//
-//        getMenuInflater().inflate(R.menu.menu_search,menu);
-//        MenuItem item = menu.findItem(R.id.menuSearch);
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-//
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                Log.v("query",query);
-//                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(),mGeocodedLocation[0].getLabel());
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(final String newText) {
-//                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(newText,mGeocodeParameters);
-//                geocodeFuture.addDoneListener(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            // Get the results of the async operation
-//                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
-//
-//                            if (geocodeResults.size() > 0){
-//                                // Use the first result - for example
-//                                // display on the map
-//                                mGeocodedLocation[0] = geocodeResults.get(0);
-//
-//                                for(int i=0;i<geocodeResults.size();i++){
-//                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
-//                                }
-//
-//                            } else {
-//                                if(!newText.isEmpty())
-//                                    Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
-//                            }
-//
-//                        } catch (InterruptedException | ExecutionException e) {
-//                            // Deal with exception...
-//                            e.printStackTrace();
-//                        }
-//                        // Done processing and can remove this listener.
-//                        geocodeFuture.removeDoneListener(this);
-//                    }
-//                });
-//                return false;
-//            }
-//        });
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_search,menu);
+
+
+        MenuItem item = menu.findItem(R.id.menuSearch);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.v("query",query);
+                displaySearchResult(mGeocodedLocation[0].getDisplayLocation(),mGeocodedLocation[0].getLabel());
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                final ListenableFuture<List<GeocodeResult>> geocodeFuture = locatorTask.geocodeAsync(newText,mGeocodeParameters);
+                geocodeFuture.addDoneListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // Get the results of the async operation
+                            List<GeocodeResult> geocodeResults = geocodeFuture.get();
+
+                            if (geocodeResults.size() > 0){
+                                // Use the first result - for example
+                                // display on the map
+                                mGeocodedLocation[0] = geocodeResults.get(0);
+
+                                for(int i=0;i<geocodeResults.size();i++){
+                                    Log.v("Map","search: "+geocodeResults.get(i).getDisplayLocation()+" , "+geocodeResults.get(i).getLabel());
+                                }
+
+                            } else {
+                                if(!newText.isEmpty())
+                                    Toast.makeText(getApplicationContext(), "Address not found!!", Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (InterruptedException | ExecutionException e) {
+                            // Deal with exception...
+                            e.printStackTrace();
+                        }
+                        // Done processing and can remove this listener.
+                        geocodeFuture.removeDoneListener(this);
+                    }
+                });
+                return false;
+            }
+        });
+
+//        private MenuItem floor9,floor8,floor7,floor6,floor5,floor4,floor3,floorM2,floor2,floorM1,floor1,floorM0,floor0,floorMB0,floorB0,floorMSB0,floorSB0,floorSS0;
+
+
+        // Get the sub layer switching menu items.
+        floor9 = menu.getItem(1);floor8 = menu.getItem(2);floor7 = menu.getItem(3);
+        floor6 = menu.getItem(4);floor5 = menu.getItem(5);floor4 = menu.getItem(6);
+        floor3 = menu.getItem(7);floorM2 = menu.getItem(8);floor2 = menu.getItem(9);
+        floorM1 = menu.getItem(10);floor1 = menu.getItem(11);floorM0 = menu.getItem(12);
+        floor0 = menu.getItem(13);floorMB0 = menu.getItem(14);floorB0 = menu.getItem(15);
+        floorMSB0 = menu.getItem(16);floorSB0 = menu.getItem(17);floorSS0 = menu.getItem(18);
+
+        // set all layers on by default
+        floor9.setChecked(true);floor8.setChecked(true);floor7.setChecked(true);
+        floor6.setChecked(true);floor5.setChecked(true);floor4.setChecked(true);
+        floor3.setChecked(true);floorM2.setChecked(true);floor2.setChecked(true);
+        floorM1.setChecked(true);floor1.setChecked(true);floorM0.setChecked(true);
+        floor0.setChecked(true);floorMB0.setChecked(true);floorB0.setChecked(true);
+        floorMSB0.setChecked(true);floorSB0.setChecked(true);floorSS0.setChecked(true);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle menu item selection
+        //if-else is used because this sample is used elsewhere as a Library module
+        int itemId = item.getItemId();
+        if(itemId == R.id.floor9){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(0).isVisible() && floor9.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(0).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(0).setVisible(false);
+                floor9.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(0).isVisible() && !floor9.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(0).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(0).setVisible(true);
+                floor9.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor8){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(1).isVisible() && floor8.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(1).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(1).setVisible(false);
+                floor8.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(1).isVisible() && !floor8.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(1).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(1).setVisible(true);
+                floor8.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor7){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(2).isVisible() && floor7.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(2).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(2).setVisible(false);
+                floor7.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(2).isVisible() && !floor7.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(2).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(2).setVisible(true);
+                floor7.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor6){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(3).isVisible() && floor6.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(3).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(3).setVisible(false);
+                floor6.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(3).isVisible() && !floor6.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(3).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(3).setVisible(true);
+                floor6.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor5){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(4).isVisible() && floor5.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(4).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(4).setVisible(false);
+                floor5.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(4).isVisible() && !floor5.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(4).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(4).setVisible(true);
+                floor5.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor4){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(5).isVisible() && floor4.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(5).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(5).setVisible(false);
+                floor4.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(5).isVisible() && !floor4.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(5).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(5).setVisible(true);
+                floor4.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor3){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(6).isVisible() && floor3.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(6).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(6).setVisible(false);
+                floor3.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(6).isVisible() && !floor3.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(6).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(6).setVisible(true);
+                floor3.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorM2){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(7).isVisible() && floorM2.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(7).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(7).setVisible(false);
+                floorM2.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(7).isVisible() && !floorM2.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(7).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(7).setVisible(true);
+                floorM2.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor2){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(8).isVisible() && floor2.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(8).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(8).setVisible(false);
+                floor2.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(8).isVisible() && !floor2.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(8).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(8).setVisible(true);
+                floor2.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorM1){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(9).isVisible() && floorM1.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(9).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(9).setVisible(false);
+                floorM1.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(9).isVisible() && !floorM1.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(9).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(9).setVisible(true);
+                floorM1.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor1){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(10).isVisible() && floor1.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(10).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(10).setVisible(false);
+                floor1.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(10).isVisible() && !floor1.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(10).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(10).setVisible(true);
+                floor1.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorM0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(11).isVisible() && floorM0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(11).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(11).setVisible(false);
+                floorM0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(11).isVisible() && !floorM0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(11).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(11).setVisible(true);
+                floorM0.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floor0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(12).isVisible() && floor0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(12).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(12).setVisible(false);
+                floor0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(12).isVisible() && !floor0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(12).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(12).setVisible(true);
+                floor0.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorMB0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(13).isVisible() && floorMB0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(13).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(13).setVisible(false);
+                floorMB0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(13).isVisible() && !floorMB0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(13).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(13).setVisible(true);
+                floorMB0.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorB0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(14).isVisible() && floorB0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(14).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(14).setVisible(false);
+                floorB0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(14).isVisible() && !floorB0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(14).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(14).setVisible(true);
+                floorB0.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorMSB0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(15).isVisible() && floorMSB0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(15).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(15).setVisible(false);
+                floorMSB0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(15).isVisible() && !floorMSB0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(15).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(15).setVisible(true);
+                floorMSB0.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorSB0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(16).isVisible() && floorSB0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(16).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(16).setVisible(false);
+                floorSB0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(16).isVisible() && !floorSB0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(16).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(16).setVisible(true);
+                floorSB0.setChecked(true);
+            }
+            return true;
+        }else if(itemId == R.id.floorSS0){
+            if(mapImageLayer.getSublayers().get(0).getSublayers().get(17).isVisible() && floorSS0.isChecked()){
+                // layer is on and menu item checked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(17).setVisible(false);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(17).setVisible(false);
+                floorSS0.setChecked(false);
+            }else if(!mapImageLayer.getSublayers().get(0).getSublayers().get(17).isVisible() && !floorSS0.isChecked()){
+                // layer is off and menu item unchecked
+                mapImageLayer.getSublayers().get(0).getSublayers().get(17).setVisible(true);
+                mapImageLayer.getSublayers().get(1).getSublayers().get(17).setVisible(true);
+                floorSS0.setChecked(true);
+            }
+            return true;
+        }else{
+            return super.onOptionsItemSelected(item);
+        }
+
+        //floorMB0,floorB0,floorMSB0,floorSB0,floorSS0
+    }
 
     void displaySearchResult(Point resultPoint, String address) {
 

@@ -8,4 +8,78 @@
         app:showAsAction="ifRoom|collapseActionView">
 
     </item>
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/floor9"
+            app:showAsAction="never"
+            android:title="_9_Floor" />
+        <item
+            android:id="@+id/floor8"
+            app:showAsAction="never"
+            android:title="_8_Floor" />
+        <item
+            android:id="@+id/floor7"
+            app:showAsAction="never"
+            android:title="_7_Floor" />
+        <item
+            android:id="@+id/floor6"
+            app:showAsAction="never"
+            android:title="_6_Floor" />
+        <item
+            android:id="@+id/floor5"
+            app:showAsAction="never"
+            android:title="_5_Floor" />
+        <item
+            android:id="@+id/floor4"
+            app:showAsAction="never"
+            android:title="_4_Floor" />
+        <item
+            android:id="@+id/floor3"
+            app:showAsAction="never"
+            android:title="_3_Floor" />
+        <item
+            android:id="@+id/floorM2"
+            app:showAsAction="never"
+            android:title="_M2_Floor" />
+        <item
+            android:id="@+id/floor2"
+            app:showAsAction="never"
+            android:title="_2_Floor" />
+        <item
+            android:id="@+id/floorM1"
+            app:showAsAction="never"
+            android:title="_M1_Floor" />
+        <item
+            android:id="@+id/floor1"
+            app:showAsAction="never"
+            android:title="_1_Floor" />
+        <item
+            android:id="@+id/floorM0"
+            app:showAsAction="never"
+            android:title="_M0_Floor" />
+        <item
+            android:id="@+id/floor0"
+            app:showAsAction="never"
+            android:title="_0_Floor" />
+        <item
+            android:id="@+id/floorMB0"
+            app:showAsAction="never"
+            android:title="_MB0_Floor" />
+        <item
+            android:id="@+id/floorB0"
+            app:showAsAction="never"
+            android:title="_B0_Floor" />
+        <item
+            android:id="@+id/floorMSB0"
+            app:showAsAction="never"
+            android:title="_MSB0_Floor" />
+        <item
+            android:id="@+id/floorSB0"
+            app:showAsAction="never"
+            android:title="_SB0_Floor" />
+        <item
+            android:id="@+id/floorSS0"
+            app:showAsAction="never"
+            android:title="_SS0_Floor" />
+    </group>
 </menu>
